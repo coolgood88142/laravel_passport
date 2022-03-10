@@ -40,3 +40,7 @@ Route::group(['prefix' => '/user', 'middleware' => 'auth:api'], function (){
         return $request->user()->email;
     })->middleware('scope:Email');
 });
+
+// Route::get('/user', function (Request $request) {
+//     //
+// })->middleware('auth:api');

@@ -29,10 +29,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::routes();
 
-        // Passport::tokensCan([
-        //     'Profile' => 'Access your profile',
-        //     'Email'   => 'Access your Email',
-        // ]);
+        Passport::tokensCan([
+            'Profile' => 'Access your profile',
+            'Email'   => 'Access your Email',
+        ]);
 
         Passport::tokensExpireIn(Carbon::now()->addDays(15));
 
