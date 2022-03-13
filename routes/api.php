@@ -32,15 +32,15 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
-Route::group(['prefix' => '/user', 'middleware' => 'auth:api'], function (){
-    Route::get('/profile', function (Request $request) {
-        return $request->user()->toArray();
-    })->middleware('scope:Profile');
-    Route::get('/email', function (Request $request) {
-        return $request->user()->email;
-    })->middleware('scope:Email');
-});
+// Route::group(['prefix' => '/user', 'middleware' => 'auth:api'], function (){
+//     Route::get('/profile', function (Request $request) {
+//         return $request->user()->toArray();
+//     })->middleware('scope:Profile');
+//     Route::get('/email', function (Request $request) {
+//         return $request->user()->email;
+//     })->middleware('scope:Email');
+// });
 
-// Route::get('/user', function (Request $request) {
-//     //
-// })->middleware('auth:api');
+Route::get('/user', function (Request $request) {
+    return $request->user()->toArray();
+})->middleware('auth:api');
