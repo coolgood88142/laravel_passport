@@ -25,3 +25,11 @@ Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/authorizationCode', 'AuthorizationController@authorize')->name('authorizationCode');
+
+Route::post('/authorizationCode', 'ApproveAuthorizationController@approve')->name('approve');
+
+Route::delete('/authorizationCode', 'DenyAuthorizationController@deny')->name('deny');
+
+Route::get('/accessToken', 'AccessTokenController@issueToken')->name('accessToken');
