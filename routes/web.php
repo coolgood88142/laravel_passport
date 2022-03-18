@@ -14,22 +14,57 @@ use Illuminate\Support\Str;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
-
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
+// Route::middleware('auth')->get('/login', function () {
+//     return view('login');
+// });
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['middleware' => ['web', 'auth']], function ($router) {
+    Route::get('/authorizationCode', [
+        'uses' => 'AuthorizationController@authorizationCode',
+        'as' => 'passport.authorizations.authorize',
+    ]);
 
-Route::get('/authorizationCode', 'AuthorizationController@authorize')->name('authorizationCode');
+    Route::post('/authorizationCode', [
+        'uses' => 'ApproveAuthorizationController@approve',
+        'as' => 'passport.authorizations.approve',
+    ]);
 
-Route::post('/authorizationCode', 'ApproveAuthorizationController@approve')->name('approve');
+    Route::delete('/authorizationCode', [
+        'uses' => 'DenyAuthorizationController@deny',
+        'as' => 'passport.authorizations.deny',
+    ]);
+});
 
-Route::delete('/authorizationCode', 'DenyAuthorizationController@deny')->name('deny');
+Route::post('/accessToken', [
+    'uses' => 'AccessTokenController@issueToken',
+    'as' => 'passport.token',
+    'middleware' => 'throttle',
+]);
+
+Route::group(['middleware' => ['web', 'auth']], function ($router) {
+    Route::get('/accessToken', [
+        'uses' => 'AuthorizedAccessTokenController@forUser',
+        'as' => 'passport.tokens.index',
+    ]);
+
+    Route::delete('/accessToken/{token_id}', [
+        'uses' => 'AuthorizedAccessTokenController@destroy',
+        'as' => 'passport.tokens.destroy',
+    ]);
+});
+
+// Route::get('/authorizationCode', 'AuthorizationController@authorizationCode')->name('authorizationCode');
+
+// Route::post('/authorizationCode', 'ApproveAuthorizationController@approve')->name('approve');
+
+// Route::delete('/authorizationCode', 'DenyAuthorizationController@deny')->name('deny');
 
 Route::get('/accessToken', 'AccessTokenController@issueToken')->name('accessToken');

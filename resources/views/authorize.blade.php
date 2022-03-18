@@ -47,7 +47,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Introduction -->
-                        <p>是否同意用Larvel Passport授權登入<strong>{{ $client->name }}</strong> </p>
+                        <p>是否同意授權用Larvel Passport登入<strong>{{ $client->name }}</strong> </p>
 
                         <!-- Scope List -->
                         @if (count($scopes) > 0)
@@ -64,7 +64,7 @@
 
                         <div class="buttons">
                             <!-- Authorize Button -->
-                            <form method="post" action="{{ route('approve') }}">
+                            <form method="post" action="{{ route('passport.authorizations.approve') }}">
                                 {{ csrf_field() }}
 
                                 <input type="hidden" name="state" value="{{ $request->state }}">
@@ -73,7 +73,7 @@
                             </form>
 
                             <!-- Cancel Button -->
-                            <form method="post" action="{{ route('deny') }}">
+                            <form method="post" action="{{ route('passport.authorizations.deny') }}">
                                 {{ csrf_field() }}
                                 {{ method_field('DELETE') }}
 
