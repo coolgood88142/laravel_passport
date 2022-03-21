@@ -20,13 +20,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/passport', function () {
+    return view('passport');
+})->name('passport');
+
+Route::get('/test', 'TestController@test')->name('testWelcome');
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 // Route::middleware('auth')->get('/login', function () {
 //     return view('login');
 // });
 
-Route::group(['middleware' => ['web', 'auth']], function ($router) {
+Route::group(['middleware' => ['web', 'oauth']], function ($router) {
     Route::get('/authorizationCode', [
         'uses' => 'AuthorizationController@authorizationCode',
         'as' => 'passport.authorizations.authorize',
@@ -43,28 +49,9 @@ Route::group(['middleware' => ['web', 'auth']], function ($router) {
     ]);
 });
 
-Route::post('/accessToken', [
-    'uses' => 'AccessTokenController@issueToken',
-    'as' => 'passport.token',
-    'middleware' => 'throttle',
-]);
-
-Route::group(['middleware' => ['web', 'auth']], function ($router) {
-    Route::get('/accessToken', [
-        'uses' => 'AuthorizedAccessTokenController@forUser',
-        'as' => 'passport.tokens.index',
-    ]);
-
-    Route::delete('/accessToken/{token_id}', [
-        'uses' => 'AuthorizedAccessTokenController@destroy',
-        'as' => 'passport.tokens.destroy',
-    ]);
-});
-
 // Route::get('/authorizationCode', 'AuthorizationController@authorizationCode')->name('authorizationCode');
 
 // Route::post('/authorizationCode', 'ApproveAuthorizationController@approve')->name('approve');
 
 // Route::delete('/authorizationCode', 'DenyAuthorizationController@deny')->name('deny');
 
-Route::get('/accessToken', 'AccessTokenController@issueToken')->name('accessToken');
