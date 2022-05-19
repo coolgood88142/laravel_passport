@@ -24,7 +24,7 @@ Route::get('/passport', function () {
     return view('passport');
 })->name('passport');
 
-Route::get('/test', 'TestController@test')->name('testWelcome');
+Route::get('/test', 'HomeController@test')->name('testWelcome');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -32,6 +32,13 @@ Route::get('/home', 'HomeController@index')->name('home');
 //     return view('login');
 // });
 
+// Route::post('/authorizationCode','ApproveAuthorizationController@approve')->name('passport.authorizations.approve');
+
+//auth:api
+// Route::get('/authorizationCode', [
+//     'uses' => 'AuthorizationController@authorizationCode',
+//     'as' => 'passport.authorizations.authorize',
+// ]);
 Route::group(['middleware' => ['web', 'oauth']], function ($router) {
     Route::get('/authorizationCode', [
         'uses' => 'AuthorizationController@authorizationCode',
@@ -55,3 +62,8 @@ Route::group(['middleware' => ['web', 'oauth']], function ($router) {
 
 // Route::delete('/authorizationCode', 'DenyAuthorizationController@deny')->name('deny');
 
+Route::get('/getCSRFToken', 'HomeController@getCSRFToken');
+
+Route::get('/permission', 'PermissionController@getDefaultData');
+
+Route::post('/savePermission', 'PermissionController@savePermission')->name('savePermission');

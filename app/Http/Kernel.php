@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
         'oauth' => \App\Http\Middleware\OauthAuthenticate::class,
+        'swfix' => \App\Http\Middleware\SwaggerFix::class,
     ];
 
     /**

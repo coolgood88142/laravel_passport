@@ -1,0 +1,112 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Laravel Passport Authorization Code API",
+        "description": "Authorization Code API description",
+        "contact": {
+            "email": "coolgood88142@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/authorizationCode": {
+            "get": {
+                "tags": [
+                    "AuthorizationCode"
+                ],
+                "summary": "取得authorizationCode",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "description": "client端ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "redirect_uri",
+                        "in": "query",
+                        "description": "導頁的Uri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "response_type",
+                        "in": "query",
+                        "description": "授權類型",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "scope",
+                        "in": "query",
+                        "description": "存取資料範圍",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "state",
+                        "in": "query",
+                        "description": "授權編碼",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful creation"
+                    }
+                }
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "UserInfo"
+                ],
+                "summary": "取得使用者資訊",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {},
+    "securityDefinitions": {
+        "passport": {
+            "type": "oauth2",
+            "description": "Laravel passport oauth2 security.",
+            "in": "header",
+            "scheme": "https",
+            "flows": "password",
+            "passport": {
+                "password": {
+                    "authorizationUrl": "http://localhost/authorizationCode",
+                    "tokenUrl": "http://localhost/oauth/token",
+                    "refreshUrl": "http://localhost/token/refresh",
+                    "scopes": []
+                }
+            }
+        }
+    }
+}

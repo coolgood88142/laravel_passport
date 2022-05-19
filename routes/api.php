@@ -41,6 +41,32 @@ use App\Http\Controllers\AuthController;
 //     })->middleware('scope:Email');
 // });
 
-Route::get('/user', function (Request $request) {
-    return $request->user()->toArray();
-})->middleware('auth:api');
+// Route::get('/user', function (Request $request) {
+//     return $request->user()->toArray();
+// })->middleware('auth:api');
+
+Route::middleware('auth:api')->get('/user', 'UserController@getData');
+
+Route::middleware('auth:api')->get('/authorizationCode', 'AuthorizationController@authorizationCode');
+
+// Route::middleware('auth:api')->post('/authorizationCode', 'ApproveAuthorizationController@approve');
+
+// Route::middleware('auth:api')->delete('/authorizationCode', 'DenyAuthorizationController@deny');
+
+
+// Route::group(['middleware' => ['web', 'oauth']], function ($router) {
+//     Route::get('/authorizationCode', [
+//         'uses' => 'AuthorizationController@authorizationCode',
+//         'as' => 'passport.authorizations.authorize',
+//     ]);
+
+//     Route::post('/authorizationCode', [
+//         'uses' => 'ApproveAuthorizationController@approve',
+//         'as' => 'passport.authorizations.approve',
+//     ]);
+
+//     Route::delete('/authorizationCode', [
+//         'uses' => 'DenyAuthorizationController@deny',
+//         'as' => 'passport.authorizations.deny',
+//     ]);
+// });

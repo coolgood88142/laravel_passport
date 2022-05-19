@@ -14,6 +14,54 @@ use Zend\Diactoros\Response as Psr7Response;
 
 class AuthorizationController
 {
+    /**
+     * @SWG\Get(
+     *     path="/authorizationCode",
+     *     summary="取得authorizationCode",
+     *     tags={"AuthorizationCode"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *          name="client_id",
+     *          in="query",
+     *          description="client端ID",
+     *          required=true,
+     *          type="string",
+     *     ),
+     *     @SWG\Parameter(
+     *          name="redirect_uri",
+     *          in="query",
+     *          description="導頁的Uri",
+     *          required=true,
+     *          type="string",
+     *     ),
+     *     @SWG\Parameter(
+     *          name="response_type",
+     *          in="query",
+     *          description="授權類型",
+     *          required=true,
+     *          type="string",
+     *     ),
+     *     @SWG\Parameter(
+     *          name="scope",
+     *          in="query",
+     *          description="存取資料範圍",
+     *          required=false,
+     *          type="string",
+     *     ),
+     *     @SWG\Parameter(
+     *          name="state",
+     *          in="query",
+     *          description="授權編碼",
+     *          required=true,
+     *          type="string",
+     *     ),
+     *     @SWG\Response(
+     *          response="200",
+     *          description="Successful creation",
+     *     )
+     * )
+     */
+
     use HandlesOAuthErrors;
 
     /**
