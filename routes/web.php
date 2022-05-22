@@ -64,6 +64,6 @@ Route::group(['middleware' => ['web', 'oauth']], function ($router) {
 
 Route::get('/getCSRFToken', 'HomeController@getCSRFToken');
 
-Route::get('/permission', 'PermissionController@getDefaultData');
+Route::get('/permission', 'PermissionController@getDefaultData')->name('permission');
 
 Route::post('/savePermission', 'PermissionController@savePermission')->name('savePermission');

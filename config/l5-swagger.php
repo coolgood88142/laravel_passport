@@ -52,9 +52,9 @@ return [
                 \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
                 'auth',
             ],
-            'asset' => [],
-            'docs' => [],
-            'oauth2_callback' => [],
+            // 'asset' => [],
+            // 'docs' => [],
+            // 'oauth2_callback' => [],
         ],
     ],
 
@@ -159,12 +159,12 @@ return [
 
         /* Open API 3.0 support */
         'passport' => [ // Unique name of security
-            'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+            'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
             'description' => 'Laravel passport oauth2 security.',
             'in' => 'header',
+            'name' => '',
             'scheme' => 'https',
-            'flows' => 'password',
-            'passport' => [
+            'flows' => [
                 "password" => [
                     "authorizationUrl" => config('app.url') . '/authorizationCode',
                     "tokenUrl" => config('app.url') . '/oauth/token',

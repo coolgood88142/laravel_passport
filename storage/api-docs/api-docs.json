@@ -9,6 +9,52 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Login",
+                "operationId": "login",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
         "/authorizationCode": {
             "get": {
                 "tags": [
@@ -57,7 +103,63 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful creation"
+                        "description": "Successful creation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/token": {
+            "post": {
+                "tags": [
+                    "AccessToken"
+                ],
+                "summary": "取得Access Token",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "grant_type",
+                        "in": "formData",
+                        "description": "grantType",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "redirect_uri",
+                        "in": "formData",
+                        "description": "redirectUri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "code",
+                        "in": "formData",
+                        "description": "code",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "client_id",
+                        "in": "formData",
+                        "description": "client_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "client_secret",
+                        "in": "formData",
+                        "description": "clientSecret",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
                     }
                 }
             }
@@ -93,13 +195,17 @@
     },
     "definitions": {},
     "securityDefinitions": {
+        "Bearer": {
+            "type": "basic",
+            "name": "Authorization"
+        },
         "passport": {
-            "type": "oauth2",
+            "type": "apiKey",
             "description": "Laravel passport oauth2 security.",
             "in": "header",
+            "name": "",
             "scheme": "https",
-            "flows": "password",
-            "passport": {
+            "flows": {
                 "password": {
                     "authorizationUrl": "http://localhost/authorizationCode",
                     "tokenUrl": "http://localhost/oauth/token",

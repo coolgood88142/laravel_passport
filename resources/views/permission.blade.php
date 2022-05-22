@@ -7,12 +7,13 @@
             <div id="app">
                 <form method="post" action="{{url('/savePermission')}}">
                     @csrf
-                    @foreach ($product as $key => $value)
-                        @foreach ($permission as $index => $item)
-                            <input type="checkbox" name="product[]" value="{{ $key }}" @if ($index == $key) checked @endif>{{ $value }}
-                        @endforeach
+                    @foreach ($product as $value)
+                        <input type="checkbox" name="product[]" value="{{ $value->id }}"
+                            @foreach ($permission as $item)
+                                 @if ($item->product_id == $value->id) checked @endif
+                            @endforeach
+                        >{{ $value->name }}
                     @endforeach
-                    <input type="hidden" name="permission" value="{{ json_encode($permission, true) }}">
                     <button type="submit">送出</button>
                 </form>
             </div>

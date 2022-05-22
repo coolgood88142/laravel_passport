@@ -5,15 +5,8 @@
     <body>
         <div class="container">
             <div id="app">
-                <form method="post" action="{{url('/savePermission')}}">
-                    @csrf
-                    @foreach ($product as $key => $value)
-                        @foreach ($permission as $item)
-                            <input type="checkbox" name="product[]" value="{{ $key }}" @if ($item == $key) checked @endif>{{ $value }}
-                        @endforeach
-                    @endforeach
-                    <button type="submit">送出</button>
-                </form>
+                {{ $showText }}
+                <button type="button" onclick="window.location.href='/permission'">回選擇頁</button>
             </div>
         </div>
     </body>

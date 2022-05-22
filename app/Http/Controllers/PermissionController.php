@@ -3,73 +3,106 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
+use App\Models\UserPermission;
+use App\Models\UserPermissionLog;
 class PermissionController extends Controller
 {
     protected $product;
     public function __construct()
     {
-        $this->product = ['google','fb', 'Twitter'];
+        $this->product =  Product::all();
     }
 
     public function getDefaultData(){
-        $permission = [0];
+        $permission = [];
+        if(Auth::check()){
+            $userId = Auth::user()->id;
+            $permissionCount = UserPermission::where('user_id', $userId)->count();
+
+            if($permissionCount > 0){
+                $permission = UserPermission::where('user_id', $userId)->get();
+            }
+        }else if($nowProduct == null){
+            $showText = '請選擇權益!';
+        }else{
+            return '請先登入後再選擇權益!';
+        }
 
         return view('permission', ['product' => $this->product, 'permission' => $permission]);
     }
 
     public function savePermission(Request $request){
-        $permission = json_decode($request->permission);
-        $nowProduct = $request->product;
+        $permission = [];
         $nowPermission = [];
         $showText = '';
+        $nowProduct = $request->product;
+        if(Auth::check()){
+            $userId = Auth::user()->id;
+            $permission = UserPermission::where('user_id', $userId);
+            $count = $permission->count();
 
-        if($nowProduct == null){
-            $showText = '請選擇權益!';
-        }else{
-            foreach($this->product as $key => $value){
-                if(!in_array($key, $permission) && !in_array($key, $nowProduct)){
-                    continue;
-                }
-
-                if(in_array($key, $permission) && !in_array($key, $nowProduct)){
-                    $showText = $showText . '移除' . $value;
-                }else if(!in_array($key, $permission) && in_array($key, $nowProduct)){
-                    $showText = $showText . '新增' . $value;
-                }
-
-                if($showText != ''){
-                    $showText = $showText . ',';
+            $add = [];
+            $del = [];
+            foreach($this->product as $value){
+                if($count > 0){
+                    $permissionData = $permission->where('product_id', $value->id)->get();
+                    if($permissionData != null && $nowProduct == null){
+                        $UserPermission = new UserPermissionLog();
+                        $UserPermission->user_id = $userId;
+                        $UserPermission->product_id = $value->id;
+                        $UserPermission->save();
+                        array_push($del, $value->id);
+                        $showText = $showText . '移除' . $value->name . ',';
+                    }else{
+                        if($permissionData != null && !in_array($value->id, $nowProduct)){
+                            $UserPermission = new UserPermissionLog();
+                            $UserPermission->user_id = $userId;
+                            $UserPermission->product_id = $value->id;
+                            $UserPermission->save();
+                            array_push($del, $value->id);
+                            $showText = $showText . '移除' . $value->name . ',';
+                        }else if($permissionData == null && in_array($value->id, $nowProduct)){
+                            $UserPermission = new UserPermission();
+                            $UserPermission->user_id = $userId;
+                            $UserPermission->product_id = $value->id;
+                            $UserPermission->save();
+                            $showText = $showText . '新增' . $value->name . ',';
+                        }
+                    }
+                }else{
+                    if(in_array($value->id, $nowProduct)){
+                        $UserPermission = new UserPermission();
+                        $UserPermission->user_id = $userId;
+                        $UserPermission->product_id = $value->id;
+                        $UserPermission->save();
+                        $showText = $showText . '新增' . $value->name . ',';
+                    }
                 }
             }
 
-            $showText = substr($showText, 0, -1);
+            if($showText != ''){
+                $showText = substr($showText, 0, -1);
+            }
+
+            if(count($del) > 0){
+                UserPermission::whereIn('product_id', $del)->delete();
+            }
+        }else if(!Auth::check() && $nowProduct == null){
+            $showText = '請選擇權益!';
+        }else{
+            $showText = '請先登入後再選擇權益!';
         }
 
+        return view('showPermission', ['showText' => $showText]);
+    }
 
-
-        // dd(substr($showText, 0, -1));
-
-        // foreach($permission as $key => $value){
-        //     $isDelete = false;
-        //     foreach($nowProduct as $index => $item){
-        //         if((string)$value != $item){
-        //             $isDelete = true;
-        //         }
-        //     }
-        //     dd($key);
-        //     if($isDelete){
-        //         $showText += '移除' . intval($value);
-        //     }else{
-        //         $showText += '新增' . intval($value);
-        //     }
-
-
-        //     if($key != 1){
-        //         $showText += ',';
-        //     }
-        // }
-
-        return $showText;
+    public function saveUserPermission($UserPermission, $value){
+        $UserPermission = new UserPermission();
+        $UserPermission->user_id = $userId;
+        $UserPermission->product_id = $value->id;
+        $UserPermission->save();
+        $showText = $showText . '新增' . $value->name . ',';
     }
 }

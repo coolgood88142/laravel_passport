@@ -29,6 +29,47 @@ class LoginController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
+     *  @SWG\Post(
+     *      path="/login",
+     *      tags={"Login"},
+     *      summary="Login",
+     *      operationId="login",
+     *      consumes={"application/x-www-form-urlencoded"},
+     *      produces={"application/x-www-form-urlencoded"},
+     *      @SWG\Parameter(
+     *           name="email",
+     *           in="formData",
+     *           required=true,
+     *           type="string"
+     *      ),
+     *      @SWG\Parameter(
+     *           name="password",
+     *           in="formData",
+     *           required=true,
+     *           type="string"
+     *      ),
+     *      @SWG\Response(
+     *           response=200,
+     *           description="Success"
+     *      ),
+     *      @SWG\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *      ),
+     *      @SWG\Response(
+     *         response=400,
+     *         description="Bad Request"
+     *      ),
+     *      @SWG\Response(
+     *         response=404,
+     *         description="not found"
+     *      ),
+     *      @SWG\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *      )
+     *  )
+     *
      * Create a new controller instance.
      *
      * @return void
