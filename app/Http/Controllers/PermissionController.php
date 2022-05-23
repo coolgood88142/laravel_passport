@@ -46,24 +46,24 @@ class PermissionController extends Controller
             $add = [];
             $del = [];
             foreach($this->product as $value){
-                if($count > 0){
-                    $permissionData = $permission->where('product_id', $value->id)->get();
-                    if($permissionData != null && $nowProduct == null){
-                        $UserPermission = new UserPermissionLog();
-                        $UserPermission->user_id = $userId;
-                        $UserPermission->product_id = $value->id;
-                        $UserPermission->save();
-                        array_push($del, $value->id);
-                        $showText = $showText . '移除' . $value->name . ',';
-                    }else{
-                        if($permissionData != null && !in_array($value->id, $nowProduct)){
+                $permissionData = $permission->where('product_id', $value->id)->get();
+                if($count > 0 || $permissionData == null){
+                    foreach($permissionData as $data){
+                        if($data != null && $nowProduct == null){
                             $UserPermission = new UserPermissionLog();
                             $UserPermission->user_id = $userId;
                             $UserPermission->product_id = $value->id;
                             $UserPermission->save();
                             array_push($del, $value->id);
                             $showText = $showText . '移除' . $value->name . ',';
-                        }else if($permissionData == null && in_array($value->id, $nowProduct)){
+                        }else if($data != null && !in_array($value->id, $nowProduct)){
+                            $UserPermission = new UserPermissionLog();
+                            $UserPermission->user_id = $userId;
+                            $UserPermission->product_id = $value->id;
+                            $UserPermission->save();
+                            array_push($del, $value->id);
+                            $showText = $showText . '移除' . $value->name . ',';
+                        }else if($data == null && in_array($value->id, $nowProduct)){
                             $UserPermission = new UserPermission();
                             $UserPermission->user_id = $userId;
                             $UserPermission->product_id = $value->id;
@@ -71,14 +71,12 @@ class PermissionController extends Controller
                             $showText = $showText . '新增' . $value->name . ',';
                         }
                     }
-                }else{
-                    if(in_array($value->id, $nowProduct)){
+                }else if(in_array($value->id, $nowProduct)){
                         $UserPermission = new UserPermission();
                         $UserPermission->user_id = $userId;
                         $UserPermission->product_id = $value->id;
                         $UserPermission->save();
                         $showText = $showText . '新增' . $value->name . ',';
-                    }
                 }
             }
 
