@@ -17,6 +17,8 @@ class CreateUserPermissionTable extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->integer('product_id');
+            $table->datetime('start_datetime');
+            $table->datetime('end_datetime');
             $table->timestamps();
         });
     }

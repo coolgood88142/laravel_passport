@@ -16,7 +16,9 @@ class CreateCompanyPermissionTable extends Migration
         Schema::create('company_permission', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('company_id');
-            $table->date('effective_date');
+            $table->integer('product_id');
+            $table->datetime('start_datetime');
+            $table->datetime('end_datetime');
             $table->timestamps();
         });
     }

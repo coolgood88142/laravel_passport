@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserPermissionLogTable extends Migration
+class CreateCompanyTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateUserPermissionLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_permission_log', function (Blueprint $table) {
+        Schema::create('company', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id');
-            $table->integer('product_id');
-            $table->datetime('start_datetime');
-            $table->datetime('end_datetime');
-            $table->timestamps();
+            $table->string('name', 30);
         });
     }
 
@@ -30,6 +26,6 @@ class CreateUserPermissionLogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_permission_log');
+        Schema::dropIfExists('company');
     }
 }
