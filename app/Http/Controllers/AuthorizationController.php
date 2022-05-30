@@ -20,11 +20,9 @@ class AuthorizationController
      *     summary="取得authorizationCode",
      *     tags={"AuthorizationCode"},
      *     produces={"application/json"},
-     *     @SWG\Head(
-     *          @SWG\Schema(
-     *              ref="http://127.0.0.1:8000/login"
-     *          )
-     *     ),
+     *     security={
+     *          {"Bearer":{}}
+     *     },
      *     @SWG\Parameter(
      *          name="client_id",
      *          in="query",
@@ -62,10 +60,7 @@ class AuthorizationController
      *     ),
      *     @SWG\Response(
      *          response="200",
-     *          description="Successful creation",
-     *          @SWG\Schema(
-     *              type="string"
-     *          )
+     *          description="Successful creation"
      *     )
      * )
      */

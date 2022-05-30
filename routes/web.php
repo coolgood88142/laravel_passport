@@ -39,7 +39,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 //     'uses' => 'AuthorizationController@authorizationCode',
 //     'as' => 'passport.authorizations.authorize',
 // ]);
-Route::group(['middleware' => ['web', 'oauth']], function ($router) {
+Route::group(['middleware' => ['web', 'oauth', 'swfix']], function ($router) {
     Route::get('/authorizationCode', [
         'uses' => 'AuthorizationController@authorizationCode',
         'as' => 'passport.authorizations.authorize',
@@ -67,3 +67,5 @@ Route::get('/getCSRFToken', 'HomeController@getCSRFToken');
 Route::get('/permission', 'PermissionController@getDefaultData')->name('permission');
 
 Route::post('/savePermission', 'PermissionController@savePermission')->name('savePermission');
+
+Route::get('/getLoginSession', 'UserController@getLoginSesstion');

@@ -6,7 +6,7 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Support\Facades\Auth;
 use Closure;
 
-class SwaggerFix
+class SwaggerAutoGenerate
 {
     /**
      * Handle an incoming request.
@@ -17,12 +17,7 @@ class SwaggerFix
      */
     public function handle($request, Closure $next)
     {
-        if (strpos($request->headers->get("Authorization"),"Bearer ") === false) {
-            $request->headers->set("Authorization","Bearer ".$request->headers->get("Authorization"));
-        }
-
-        $response = $next($request);
-
-        return $response;
+        \Illuminate\Support\Facades\Artisan::call('l5-swagger:generate', []);
+        return $next($request);
     }
 }

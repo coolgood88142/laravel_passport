@@ -34,8 +34,8 @@ class LoginController extends Controller
      *      tags={"Login"},
      *      summary="Login",
      *      operationId="login",
-     *      consumes={"application/x-www-form-urlencoded"},
-     *      produces={"application/x-www-form-urlencoded"},
+     *      consumes={"application/json"},
+     *      produces={"application/json"},
      *      @SWG\Parameter(
      *           name="email",
      *           in="formData",

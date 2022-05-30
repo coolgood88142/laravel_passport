@@ -19,7 +19,8 @@ use Illuminate\Routing\Controller as BaseController;
  *     ),
  *     @SWG\SecurityScheme(
  *       securityDefinition="Bearer",
- *       type="basic",
+ *       type="apiKey",
+ *       in="header",
  *       name="Authorization",
  *     ),
  *     @SWG\Post(

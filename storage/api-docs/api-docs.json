@@ -17,10 +17,10 @@
                 "summary": "Login",
                 "operationId": "login",
                 "consumes": [
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "produces": [
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "parameters": [
                     {
@@ -103,12 +103,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful creation",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "description": "Successful creation"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/oauth/token": {
@@ -189,30 +191,28 @@
                     "404": {
                         "description": "not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
             }
         }
     },
     "definitions": {},
     "securityDefinitions": {
         "Bearer": {
-            "type": "basic",
-            "name": "Authorization"
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         },
         "passport": {
-            "type": "apiKey",
+            "type": "oauth2",
             "description": "Laravel passport oauth2 security.",
-            "in": "header",
-            "name": "",
-            "scheme": "https",
-            "flows": {
-                "password": {
-                    "authorizationUrl": "http://localhost/authorizationCode",
-                    "tokenUrl": "http://localhost/oauth/token",
-                    "refreshUrl": "http://localhost/token/refresh",
-                    "scopes": []
-                }
-            }
+            "flow": "password",
+            "tokenUrl": "http://localhost/oauth/token",
+            "scopes": []
         }
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,11 +46,9 @@ use App\Http\Controllers\AuthController;
 //     return $request->user()->toArray();
 // })->middleware('auth:api');
 
-Route::middleware('auth:api')->get('/user', 'UserController@getData');
+Route::middleware('auth:api', 'swfix')->get('/user', 'UserController@getData');
 
-Route::middleware('auth:api')->get('/authorizationCode', 'AuthorizationController@authorizationCode');
-
-// Route::middleware('auth:api')->post('/authorizationCode', 'ApproveAuthorizationController@approve');
+Route::middleware('auth:api', 'swfix')->get('/authorizationCode', 'AuthorizationController@authorizationCode');
 
 // Route::middleware('auth:api')->delete('/authorizationCode', 'DenyAuthorizationController@deny');
 

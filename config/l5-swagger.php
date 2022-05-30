@@ -158,20 +158,28 @@ return [
         */
 
         /* Open API 3.0 support */
+        // 'passport' => [ // Unique name of security
+        //     'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+        //     'description' => 'Laravel passport oauth2 security.',
+        //     'in' => 'header',
+        //     'name' => '',
+        //     'scheme' => 'https',
+        //     'flows' => [
+        //         "password" => [
+        //             "authorizationUrl" => config('app.url') . '/authorizationCode',
+        //             "tokenUrl" => config('app.url') . '/oauth/token',
+        //             "refreshUrl" => config('app.url') . '/token/refresh',
+        //             "scopes" => []
+        //         ],
+        //     ],
+        // ],
+
         'passport' => [ // Unique name of security
-            'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+            'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
             'description' => 'Laravel passport oauth2 security.',
-            'in' => 'header',
-            'name' => '',
-            'scheme' => 'https',
-            'flows' => [
-                "password" => [
-                    "authorizationUrl" => config('app.url') . '/authorizationCode',
-                    "tokenUrl" => config('app.url') . '/oauth/token',
-                    "refreshUrl" => config('app.url') . '/token/refresh',
-                    "scopes" => []
-                ],
-            ],
+            'flow' => 'password', // The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or "accessCode".
+            'tokenUrl' => config('app.url') . '/oauth/token', // The authorization URL to be used for (password/application/accessCode)
+            'scopes' => []
         ],
     ],
 

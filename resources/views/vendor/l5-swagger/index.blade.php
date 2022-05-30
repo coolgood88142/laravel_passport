@@ -83,6 +83,7 @@ window.onload = function() {
 
     requestInterceptor: function(request) {
       request.headers['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
+      request.headers['Authorization'] = 'Bearer ' + '{{ Cookie::get("laravel_session") }}'
       return request;
     },
 

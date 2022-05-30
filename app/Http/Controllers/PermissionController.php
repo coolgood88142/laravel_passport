@@ -45,8 +45,6 @@ class PermissionController extends Controller
                 }
             }
 
-        }else if($nowProduct == null){
-            $showText = '請選擇權益!';
         }else{
             return '請先登入後再選擇權益!';
         }

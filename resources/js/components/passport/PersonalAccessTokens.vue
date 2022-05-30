@@ -73,7 +73,7 @@
                             <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
                             <br>
                             <ul>
-                                <li v-for="(error, index)in form.errors" :key="index">
+                                <li v-for="(error, index) in form.errors" :key="index">
                                     {{ error }}
                                 </li>
                             </ul>
