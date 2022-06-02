@@ -8,6 +8,8 @@ use App\Models\CompanyPermission;
 use App\Models\Product;
 use App\Models\UserPermission;
 use App\Models\UserPermissionLog;
+use App\Presenters\UserPermissionPresenter;
+
 class PermissionController extends Controller
 {
     protected $product;
@@ -129,5 +131,24 @@ class PermissionController extends Controller
 
     public function deleteUserPermission($id){
         UserPermission::where('id', $id)->delete();
+    }
+
+    public function showUserPermissionBlade(){
+        $productData = [];
+        if(Auth::check()){
+            $userId = Auth::user()->id;
+            $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
+        }else{
+            return '請先登入後再選擇權益!';
+        }
+
+        $UserPermissionPresenter = new UserPermissionPresenter();
+
+        dd($UserPermissionPresenter->matchProductId($permission, $this->product), 'A');
+
+        // @if($presenter->checkHeader($presenter->matchProductId($permission, $product), 'A')
+
+        return view('main_permission', ['product' => $this->product, 'permission' => $permission]);
+
     }
 }

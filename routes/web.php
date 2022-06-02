@@ -69,3 +69,9 @@ Route::get('/permission', 'PermissionController@getDefaultData')->name('permissi
 Route::post('/savePermission', 'PermissionController@savePermission')->name('savePermission');
 
 Route::get('/getLoginSession', 'UserController@getLoginSesstion');
+
+Route::get('/mainPermission', 'PermissionController@showUserPermissionBlade');
+
+Route::get('content', function () {
+    return view('content');
+});
