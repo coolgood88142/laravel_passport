@@ -3,8 +3,16 @@
         <h3 class="box-title">Content</h3>
     </div>
     <div class="box-body">
-        @yield('contenta', View::make('content_a'))
-        @yield('contentb', View::make('content_b'))
-        @yield('contentc', View::make('content_c'))
+        @if($presenter->checkContent($productData, 'A'))
+            @include('contentA')
+        @endif
+
+        @if($presenter->checkContent($productData, 'B'))
+            @include('contentB')
+        @endif
+
+        @if($presenter->checkContent($productData, 'C'))
+            @include('contentC')
+        @endif
     </div>
 </div>

@@ -8,16 +8,10 @@ class UserPermissionPresenter
 {
     public function matchNowTime($startTime, $endTime){
         $now = Carbon::now('Asia/Taipei');
-        $match = false;
+        $start = Carbon::parse($startTime);
+        $end = Carbon::parse($endTime);
 
-        // $start = Carbon::new($startTime);
-        dd($now->toDateTimeString()->gt($startTime));
-
-        if($now->gt($startTime) && $now->lt($endTime)){
-            $match = true;
-        }
-
-        return $match;
+        return $now->between($start, $end);
     }
 
     public function matchProductId($permission, $product){
@@ -25,22 +19,21 @@ class UserPermissionPresenter
 
         foreach($permission as $data){
             $id = $data->product_id;
-            if(array_key_exists($id, $product) && $this->matchNowTime($data->start_datetime, $data->end_datetime)){
-                array_push($product[$id]['name'], $productData);
+            if(!in_array($product[$id]['name'], $productData) && array_key_exists($id, $product)
+                && $this->matchNowTime($data->start_datetime, $data->end_datetime)){
+                array_push($productData, $product[$id]['name']);
             }
         }
-
-        dd($productData);
 
         return $productData;
     }
 
-    public function checkHeader($productData, $nowData){
-        if($nowData == 'A' && ($productData == 'google' || $productData == 'fb' || $productData == 'twitter')){
+    public function checkHeader($productData){
+        if((in_array('google', $productData) || in_array('fb', $productData)  || in_array('twitter', $productData))){
             return true;
-        }else if($nowData == 'B' && ($productData == 'fb' || $productData == 'twitter')){
+        }else if( (in_array('fb', $productData) || in_array('twitter', $productData))){
             return true;
-        }else if($nowData == 'C' && ($productData == 'fb')){
+        }else if(in_array('fb', $productData)){
             return true;
         }
 
@@ -48,23 +41,22 @@ class UserPermissionPresenter
     }
 
     public function checkContent($productData, $nowData){
-        $show = false;
-        if($nowData == 'A' && ($productData == 'google' || $productData == 'fb')){
-            $show = true;
-        }else if($nowData == 'B' && ($productData == 'fb')){
-            $show = true;
-        }else if($nowData == 'C' && ($productData == 'fb' || $productData == 'twitter')){
-            $show = true;
+        if($nowData == 'A' && (in_array('google', $productData)  || in_array('fb', $productData))){
+            return true;
+        }else if($nowData == 'B' && in_array('fb', $productData)){
+            return true;
+        }else if($nowData == 'C' && (in_array('fb', $productData) || in_array('twitter', $productData))){
+            return true;
         }
 
-        return $show;
+        return false;
     }
 
     public function checkFooter($productData){
-        $show = false;
-        if($productData == 'google' || $productData == 'fb' || $productData == 'twitter'){
-            $show = true;
+        if(in_array('google', $productData) || in_array('fb', $productData)  || in_array('twitter', $productData)){
+            return true;
         }
-        return $show;
+
+        return false;
     }
 }

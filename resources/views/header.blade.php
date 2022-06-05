@@ -3,28 +3,16 @@
         <h3 class="box-title">Header</h3>
     </div>
     <div class="box-body">
-        @extends('main_permission')
-
-        @section('header')
-
-            <input type="button" value="A">
-
-            <input type="button" value="B">
-
-            <input type="button" value="C">
-
-        @show
-        {{-- @inject('presenter', 'App\Presenters\UserPermissionPresenter')
-        @if($presenter->checkHeader($presenter->matchProductId($permission, $product), 'A'))
+        @if($presenter->checkHeader($productData))
             <input type="button" value="A">
         @endif
 
-        @if($presenter->checkHeader($presenter->matchProductId($permission, $product), 'B'))
+        @if($presenter->checkHeader($productData))
             <input type="button" value="B">
         @endif
 
-        @if($presenter->checkHeader($presenter->matchProductId($permission, $product), 'C'))
+        @if($presenter->checkHeader($productData))
             <input type="button" value="C">
-        @endif --}}
+        @endif
     </div>
 </div>

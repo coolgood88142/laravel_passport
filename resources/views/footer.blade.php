@@ -3,6 +3,8 @@
         <h3 class="box-title">Footer</h3>
     </div>
     <div class="box-body">
-        <a href="https://laravel.com/docs/6.x">laravel 官網</a>
+        @if($showFooter)
+            <a href="https://laravel.com/docs/6.x">laravel 官網</a>
+        @endif
     </div>
 </div>

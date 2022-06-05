@@ -72,6 +72,8 @@ Route::get('/getLoginSession', 'UserController@getLoginSesstion');
 
 Route::get('/mainPermission', 'PermissionController@showUserPermissionBlade');
 
-Route::get('content', function () {
-    return view('content');
-});
+Route::get('/editTrial', 'TrialController@editTrialData')->name('editTrial');
+
+Route::get('/queryTrial', 'TrialController@queryTrialData')->name('queryTrial');
+
+Route::post('/saveTrial', 'TrialController@saveTrialData')->name('saveTrial');

@@ -142,13 +142,16 @@ class PermissionController extends Controller
             return '請先登入後再選擇權益!';
         }
 
-        $UserPermissionPresenter = new UserPermissionPresenter();
+        // $UserPermissionPresenter = new UserPermissionPresenter();
 
-        dd($UserPermissionPresenter->matchProductId($permission, $this->product), 'A');
+        // $data = $UserPermissionPresenter->matchProductId($permission, $this->product);
+
+
+        // dd($UserPermissionPresenter->checkHeader($data, 'A'));
 
         // @if($presenter->checkHeader($presenter->matchProductId($permission, $product), 'A')
 
-        return view('main_permission', ['product' => $this->product, 'permission' => $permission]);
+        return view('mainPermission', ['product' => $this->product, 'permission' => $permission]);
 
     }
 }
