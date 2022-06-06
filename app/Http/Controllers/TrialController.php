@@ -29,137 +29,97 @@ class TrialController extends Controller
     }
 
     public function queryTrialData(){
+        $trail = Trial::all();
+        $newTrial = [];
+
+        foreach($trail as $data){
+            $now = [];
+            $purposeText = '';
+            if(array_key_exists($data->purpose_id, $this->purpose)){
+                $purposeText = $this->purpose[$data->purpose_id];
+            }
+
+            $sourceText = [];
+            $source = explode(',', $data->source);
+            if(count($source) > 0){
+                foreach ($this->source as $index => $value){
+                    $text = '';
+                    if(in_array($index, $source)){
+                        if($index == $this->ortherSourceId){
+                            $text = $value . ':' . $data->other_text;
+                        }else{
+                            $text = $value;
+                        }
+                        array_push($sourceText, $text);
+                        continue;
+                    }
+                }
+            }
+
+            $now = [
+                'company_name' => $data->company_name,
+                'user_name' => $data->user_name,
+                'email' => $data->email,
+                'purpose_text' => $purposeText,
+                'source_text' => $sourceText,
+            ];
+
+            array_push($newTrial, $now);
+        }
+
         return view('queryTrial', [
-            'trialData' => Trial::all(),
-            'sourceData' => $this->source,
-            'purposeData' => $this->purpose,
-            'ortherSourceId' => $this->ortherSourceId
+            'trialData' => $newTrial
         ]);
     }
 
     public function editTrialData(){
         return view('editTrial', [
-            // 'inputCompany' => '',
-            // 'inputUserName' => '',
-            // 'inputEmail' => '',
-            // 'purposeRadios' => [],
-            // 'sourceCheckBoxs' => [],
-            // 'otherText' => '',
-            // 'errorCompany' => false,
-            // 'errorUserName' => false,
-            // 'errorEmail' => false,
-            // 'errorPurposeRadios' => false,
-            // 'errorSourceCheckBoxs' => false,
-            // 'errorOtherText' => false
+            'sourceData' => $this->source,
+            'ortherSourceId' => $this->ortherSourceId
         ]);
     }
 
     public function saveTrialData(Request $request){
-        $trial = new Trial();
-        $errorEdit = false;
-
         $validatedData = Validator::make($request->all(), [
             'inputCompany' => 'required',
             'inputUserName' => 'required',
             'inputEmail' => 'required',
             'purposeRadios' => 'required',
             'sourceCheckBoxs' => 'required',
-            // 'otherText' => 'required_if:sourceCheckBoxs.4'
-            // 'otherText' => [
-            //     'sourceCheckBoxs.4' => 'required',
-            //     'text' => 'required'
-            // ]
             'otherText' => Rule::requiredIf(function () use ($request) {
-                return in_array($this->ortherSourceId, $request->sourceCheckBoxs);
+                return $request->sourceCheckBoxs != null && in_array($this->ortherSourceId, $request->sourceCheckBoxs);
             }),
-
-            // 'otherText' =>  array(
-            //     'sourceCheckBoxs' => 'required',
-            //     'stext' => 'required_if:sourceCheckBoxs,4',
-            // )
-
-            //   'required_if:sourceCheckBoxs,4'
+        ],
+        [
+            'inputCompany.required' => '請輸入公司名稱!',
+            'inputUserName.required' => '請輸入姓名!',
+            'inputEmail.required' => '請輸入Email!',
+            'purposeRadios.required' => '至少選擇一個目的!',
+            'sourceCheckBoxs.required' => '至少勾選一個消息來源!',
+            'otherText.required' => '請輸入其他原因!',
         ]);
 
-
-        // $request->validate([
-        //     'inputCompany' => ['required'],
-        //     'inputUserName' => ['required'],
-        //     'inputEmail' => ['required'],
-        //     'purposeRadios' => ['required'],
-        //     'sourceCheckBoxs' => ['required'],
-        //     // 'otherText' => 'required_if:sourceCheckBoxs,4'
-        // ]);
-
-        // dd($validatedData);
-
-        if($request->inputCompany != ''){
+        if(count($validatedData->errors()->all()) == 0){
+            $trial = new Trial();
             $trial->company_name = $request->inputCompany;
-        }else{
-            $errorEdit = true;
-        }
-
-        if($request->inputUserName != ''){
-            $trial->company_name = $request->inputUserName;
-        }else{
-            $errorEdit = true;
-        }
-
-        if($request->inputEmail != ''){
-            $trial->user_name = $request->inputEmail;
-        }else{
-            $errorEdit = true;
-        }
-
-        if($request->purposeRadios != ''){
+            $trial->user_name = $request->inputUserName;
+            $trial->email = $request->inputEmail;
             $trial->purpose_id = $request->purposeRadios;
-        }else{
-            $request->purposeRadios = [];
-            $errorEdit = true;
-        }
 
-        $sourceData = '';
-        $errorOtherText = false;
-        if($request->sourceCheckBoxs != '' && count($request->sourceCheckBoxs) > 0){
+            $sourceData = '';
             foreach($request->sourceCheckBoxs as $source){
                 $sourceData = $sourceData . $source . ',';
-
-                if($source == $this->ortherSourceId && $request->otherText == ''){
-                    $errorOtherText = true;
-                    $errorEdit = true;
-                }else{
-                    $trial->other_text = $request->otherText;
-                }
             }
 
             if($sourceData != ''){
-                $sourceData = substr($sourceData, 0, -1);
-                $trial->source = $request->sourceData;
+                $trial->source = substr($sourceData, 0, -1);
             }
-        }else{
-            $request->sourceCheckBoxs = [];
-            $errorEdit = true;
-        }
 
-        if(!$errorEdit){
             $trial->save();
+            return redirect('queryTrial');
         }else{
-            return view('editTrial', [
-                // 'inputCompany' => $request->inputCompany,
-                // 'inputUserName' => $request->inputUserName,
-                // 'inputEmail' => $request->inputEmail,
-                // 'purposeRadios' => $request->purposeRadios,
-                // 'sourceCheckBoxs' => $request->sourceCheckBoxs,
-                // 'otherText' => $request->otherText,
-                // 'errorCompany' => $request->inputCompany == '',
-                // 'errorUserName' => $request->inputUserName == '',
-                // 'errorEmail' => $request->inputEmail == '',
-                // 'errorPurposeRadios' => $request->purposeRadios == [],
-                // 'errorSourceCheckBoxs' => $request->sourceCheckBoxs == [],
-                // 'errorOtherText' => $errorOtherText
-            ]);
+            return redirect('/editTrial')->withErrors($validatedData)
+            ->withInput();
         }
-
-        return route('queryTrial');
     }
 }

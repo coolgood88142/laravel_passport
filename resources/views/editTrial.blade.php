@@ -15,28 +15,34 @@
                                 <form class="form-horizontal"  method="post" action="{{url('/saveTrial')}}">
                                     @csrf
                                     <div class="box-body">
-                                        <div class="form-group @error('inputCompany') ? 'has-error' : '' @enderror">
+                                        <div class="form-group @error('inputCompany') has-error @enderror">
                                             <label for="inputCompany" class="col-sm-2 control-label">公司</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" name="inputCompany" id="inputCompany" value="{{ old('inputCompany') }}">
-                                                <span class="help-block" style="@error('inputCompany') ? '' : 'display:none;' @enderror">請輸入公司名稱</span>
+                                                @error('inputCompany')
+                                                    <span class="help-block">{{ $errors->first('inputCompany') }}</span>
+                                                @enderror
                                             </div>
                                         </div>
-                                        <div class="form-group @error('inputUserName') ? 'has-error' : '' @enderror">
+                                        <div class="form-group @error('inputUserName') has-error @enderror">
                                             <label for="inputUserName" class="col-sm-2 control-label">姓名</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" name="inputUserName" id="inputUserName" value="{{ old('inputUserName') }}">
-                                                <span class="help-block" style="@error('inputUserName') ? '' : 'display:none;' @enderror">請輸入姓名</span>
+                                                @error('inputUserName')
+                                                    <span class="help-block">{{ $errors->first('inputUserName') }}</span>
+                                                @enderror
                                             </div>
                                         </div>
-                                        <div class="form-group @error('inputEmail') ? 'has-error' : '' @enderror">
+                                        <div class="form-group @error('inputEmail') has-error @enderror">
                                             <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                                             <div class="col-sm-10">
                                                 <input type="email" class="form-control" name="inputEmail" id="inputEmail" value="{{ old('inputEmail') }}">
-                                                <span class="help-block" style="@error('inputEmail') ? '' : 'display:none;' @enderror">請輸入email</span>
+                                                @error('inputEmail')
+                                                    <span class="help-block">{{ $errors->first('inputEmail') }}</span>
+                                                @enderror
                                             </div>
                                         </div>
-                                        <div class="form-group @error('purposeRadios') ? 'has-error' : '' @enderror">
+                                        <div class="form-group @error('purposeRadios') has-error @enderror">
                                             <label for="purposeRadios" class="col-sm-2 control-label">目的</label>
                                             <div class="col-sm-10">
                                                 <div class="radio">
@@ -54,51 +60,37 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-10">
-                                                <span class="help-block"  style="@error('purposeRadios') ? '' : 'display:none;' @enderror">至少選擇一個目的</span>
-                                            </div>
+                                            @error('purposeRadios')
+                                                <div class="col-sm-10">
+                                                    <span class="help-block">{{ $errors->first('purposeRadios') }}</span>
+                                                </div>
+                                            @enderror
                                         </div>
-                                        <div class="form-group @error('sourceCheckBoxs') ? 'has-error' : '' @enderror">
+                                        <div class="form-group @error('sourceCheckBoxs') has-error @enderror">
                                             <label for="sourceCheckBoxs" class="col-sm-2 control-label">消息來源</label>
-                                            <div class="col-sm-10">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" name="sourceCheckBoxs[]" id="sourceCheckBoxs1" value="1" @if(old('sourceCheckBoxs') != null && in_array(1, old('sourceCheckBoxs'))) checked @endif>
-                                                            fb
-                                                    </label>
+                                            @foreach($sourceData as $index => $value)
+                                                <div class="col-sm-10">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" name="sourceCheckBoxs[]" id="sourceCheckBoxs{{ $index }}" value="{{ $index }}" @if(is_array(old('sourceCheckBoxs')) && in_array($index, old('sourceCheckBoxs'))) checked @endif>
+                                                                {{ $value }}
+                                                                @if($ortherSourceId == $index)
+                                                                    <input type="text" name="otherText" id="otherText" value="{{ old('otherText') }}" @if(!is_array(old('sourceCheckBoxs')) || !in_array($ortherSourceId, old('sourceCheckBoxs'))) disabled @endif>
+                                                                    <div class="form-group @error('otherText') has-error @enderror">
+                                                                        @error('otherText')
+                                                                            <span class="help-block">{{ $errors->first('otherText') }}</span>
+                                                                        @enderror
+                                                                    </div>
+                                                                @endif
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-10">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" name="sourceCheckBoxs[]" id="sourceCheckBoxs2" value="2" @if(old('sourceCheckBoxs') != null && in_array(2, old('sourceCheckBoxs'))) checked @endif>
-                                                            google
-                                                    </label>
+                                            @endforeach
+                                            @error('sourceCheckBoxs')
+                                                <div class="col-sm-10">
+                                                    <span class="help-block">{{ $errors->first('sourceCheckBoxs') }}</span>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-10">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" name="sourceCheckBoxs[]" id="sourceCheckBoxs3" value="3" @if(old('sourceCheckBoxs') != null && in_array(3, old('sourceCheckBoxs'))) checked @endif>
-                                                            朋友介紹
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-10">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" name="sourceCheckBoxs[]" id="sourceCheckBoxs4" value="4" @if(old('sourceCheckBoxs') != null && in_array(4, old('sourceCheckBoxs'))) checked @endif>
-                                                            其他
-                                                        <input type="text" name="otherText" id="otherText" value="{{ old('sourceCheckBoxs') != null && in_array(4, old('sourceCheckBoxs')) ? $otherText : '' }}" disabled >
-                                                        <div class="form-group @error('otherText')  ? 'has-error' : '' @enderror">
-                                                            <span class="help-block"  style="@error('otherText') ? '' : 'display:none;' @enderror">請輸入其他原因</span>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-10">
-                                                <span class="help-block"  style="@error('sourceCheckBoxs') ? '' : 'display:none;' @enderror">至少勾選一個消息來源</span>
-                                            </div>
+                                            @enderror
                                         </div>
                                         <div class="form-group">
                                             <div class="checkbox">
@@ -122,12 +114,6 @@
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
     </body>
     <script>
-        $(document).ready(function() {
-            // if($('#errorText').val() != ''){
-            //     alert($('#errorText').val());
-            // }
-        });
-
         $('#sourceCheckBoxs4').click(function(){
             if($(this).is(':checked')){
                 $('#otherText').attr('disabled', false);

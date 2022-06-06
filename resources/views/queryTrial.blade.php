@@ -24,33 +24,19 @@
                                             </tr>
                                             @foreach ($trialData as $trial)
                                                 <tr>
-                                                    <th>{{ $trial->company_name }}</th>
-                                                    <th>{{ $trial->user_name }}</th>
-                                                    <th>{{ $trial->email }}</th>
-                                                    {{-- <th>{{ $purposeData[$trial->purpose_id] }}</th> --}}
-
-                                                    @if(array_key_exists($trial->purpose_id, $purposeData))
-                                                        <th>{{ $purposeData[$trial->purpose_id] }}</th>
-                                                    @endif
-
+                                                    <th>{{ $trial['company_name'] }}</th>
+                                                    <th>{{ $trial['user_name'] }}</th>
+                                                    <th>{{ $trial['email'] }}</th>
+                                                    <th>{{ $trial['purpose_text'] }}</th>
                                                     <th>
-                                                        @foreach(explode(",", $trial->source) as $source)
-                                                            @foreach ($sourceData as $index => $value)
-                                                                @if($source == $index && $source == $ortherSourceId)
-                                                                    {{ '● '. $value . ':' . $trial->other_text }}<br/>
-                                                                    @break;
-                                                                @elseif($source == $index)
-                                                                    {{ '● '. $value }}<br/>
-                                                                    @break;
-                                                                @endif
+                                                        <ul>
+                                                            @foreach ($trial['source_text'] as $text)
+                                                                <li>
+                                                                    {{ $text }}
+                                                                </li>
                                                             @endforeach
-                                                        @endforeach
+                                                        </ul>
                                                     </th>
-
-
-
-
-                                                    {{-- <th>{{ $trial->source }}</th> --}}
                                                 </tr>
                                             @endforeach
                                         </tbody>
