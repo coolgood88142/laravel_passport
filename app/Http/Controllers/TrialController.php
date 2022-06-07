@@ -28,8 +28,43 @@ class TrialController extends Controller
         $this->ortherSourceId = 4;
     }
 
-    public function queryTrialData(){
+    public function queryTrialData(Request $request){
+        $queryCompany = $request->queryCompany;
+        $queryUserName = $request->queryUserName;
+        $queryEmail = $request->queryEmail;
+        $queryPurpose = $request->queryPurpose;
+        $querySource = $request->querySource;
+
+        $where = [];
+        $whereIn = [];
         $trail = Trial::all();
+
+        if($queryCompany != null){
+            $trail = $trail->where('company_name', 'like', $queryCompany);
+        }
+
+        if($queryUserName != null){
+            $trail = $trail->where('user_name', 'like', $queryUserName);
+        }
+
+        if($queryEmail != null){
+            $trail = $trail->where('email', 'like', $queryEmail);
+        }
+
+        if($queryCompany != null){
+            $trail = $trail->where('purpose_id', '='. $queryPurpose);
+        }
+
+        if($querySource != null){
+            $trail = $trail->whereIn('source', $querySource);
+        }
+
+        dd($trail);
+
+        // $trail = $trail->get();
+
+        // dd($trail);
+
         $newTrial = [];
 
         foreach($trail as $data){
@@ -68,7 +103,9 @@ class TrialController extends Controller
         }
 
         return view('queryTrial', [
-            'trialData' => $newTrial
+            'trialData' => $newTrial,
+            'purposeData' => $this->purpose,
+            'sourceData' => $this->source,
         ]);
     }
 

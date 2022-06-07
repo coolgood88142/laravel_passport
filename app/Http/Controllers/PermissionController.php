@@ -13,46 +13,52 @@ use App\Presenters\UserPermissionPresenter;
 class PermissionController extends Controller
 {
     protected $product;
+    protected $permission;
+    protected $companyPermission;
+    protected $companyPermissionGroup;
     public function __construct()
     {
-        $product = [];
+        $this->product = [];
+        $this->permission = [];
+        $this->companyPermission = [];
+        $this->companyPermissionGroup = [];
+        $this->showText = '';
+
         foreach(Product::all() as $data){
-            $product[$data->id]['id'] = $data->id;
-            $product[$data->id]['name'] = $data->name;
+            $this->product[$data->id]['id'] = $data->id;
+            $this->product[$data->id]['name'] = $data->name;
         }
 
-        $this->product = $product;
-    }
-
-    public function getDefaultData(){
-        $permission = [];
-        $companyPermission = [];
-        $companyPermissionGroup = [];
-        $product = [];
         if(Auth::check()){
             $userId = Auth::user()->id;
             $companyId = Auth::user()->company_id;
-            $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
-            $productData = Product::all();
+            $this->permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
 
-            foreach($productData as $data){
-                $product[$data->id] = $data->name;
-
+            foreach($this->product as $id => $value){
                 $companyPermissionData = CompanyPermission::where('company_id', $companyId)
-                    ->where('product_id', $data->id)->get();
+                    ->where('product_id', $id)->get();
 
                 if($companyPermissionData->count() > 0){
-                    $companyPermission[$data->id] = $companyPermissionData;
-                    $companyPermissionGroup[$data->id] = $companyPermissionData->first();
+                    $this->companyPermission[$id] = $companyPermissionData;
+                    $this->companyPermissionGroup[$id] = $companyPermissionData->first();
                 }
             }
 
         }else{
-            return '請先登入後再選擇權益!';
+            $this->showText = '請先登入後再選擇權益!';
         }
+    }
 
-        return view('permission', ['product' => $product, 'user_permission' => $permission,
-            'company_permission' => $companyPermission, 'company_permission_group' => $companyPermissionGroup]);
+    public function getDefaultData(){
+        dd($this->companyPermissionGroup);
+        return view('permission', [
+            'product' => $this->product,
+            'user_permission' => $this->permission,
+            'company_permission' => $this->companyPermission,
+            'company_permission_group' => $this->companyPermissionGroup,
+            'show_text' => $this->showText,
+            'has_login' => Auth::check()
+        ]);
     }
 
     public function savePermission(Request $request){
@@ -104,7 +110,14 @@ class PermissionController extends Controller
             $showText = '請先登入後再選擇權益!';
         }
 
-        return view('showPermission', ['showText' => $showText]);
+        return view('permission', [
+            'product' => $this->product,
+            'user_permission' => $this->permission,
+            'company_permission' => $this->companyPermission,
+            'company_permission_group' => $this->companyPermissionGroup,
+            'show_text' => $showText,
+            'has_login' => Auth::check()
+        ]);
     }
 
     public function saveUserPermission($userId, $value, $showText){

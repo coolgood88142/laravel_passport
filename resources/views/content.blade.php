@@ -4,15 +4,15 @@
     </div>
     <div class="box-body">
         @if($presenter->checkContent($productData, 'A'))
-            @include('contentA')
+            @include('content_a')
         @endif
 
         @if($presenter->checkContent($productData, 'B'))
-            @include('contentB')
+            @include('content_b')
         @endif
 
         @if($presenter->checkContent($productData, 'C'))
-            @include('contentC')
+            @include('content_c')
         @endif
     </div>
 </div>

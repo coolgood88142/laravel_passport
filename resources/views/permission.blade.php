@@ -18,6 +18,7 @@
 				-->
 				</section>
 				<section class="countent">
+                    @if($has_login)
 					<div class="row">
 						<div class="col-8">
 							<div class="box box-info">
@@ -29,7 +30,7 @@
 										@csrf
 											@foreach ($company_permission_group as $companyPermission)
 												<div class="form-group">
-													<label>{{ $product[$companyPermission->product_id] }}</label>
+													<label>{{ $product[$companyPermission->product_id]['name'] }}</label>
 													@foreach ($company_permission[$companyPermission->product_id] as $data)
 														<div class="col-offset-2 col-8">
 															<div class="checkbox">
@@ -42,22 +43,54 @@
 																				@endif
 																			@endforeach
 																		>
-																{{ '(' . $data->start_datetime . '-' . $data->end_datetime . ')' }}	
+																{{ '(' . $data->start_datetime . '-' . $data->end_datetime . ')' }}
 															</div>
 														</div>
 													@endforeach
 												</div>
 											@endforeach
-										<button type="submit" class="btn btn-primary">送出</button>
-									</form>	
+										<button type="submit" class="btn btn-primary" >送出</button>
+                                    </form>
+                                    <button type="button" class="btn btn-default" id="showModal" data-toggle="modal" data-target="#modal-default" style="display:none;">顯示視窗</button>
+                                    <input type="hidden" id="isShowText" value="{{ $show_text }}">
 								</div>
 							</div>
 						</div>
-					</div>	
-				</section>														
+					</div>
+                    @endif
+
+                    @if($show_text != '')
+                        <div class="modal fade" id="modal-default">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title">提示訊息</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>{{ $show_text }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        @if($has_login)
+                                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">關閉</button>
+                                        @else
+                                            <button type="button" class="btn btn-primary pull-right" onclick="window.location.href='/login'">重新登入</button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+				</section>
 			</div>
 		</div>
 		<script src="{{mix('js/app.js')}}"></script>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
     </body>
+    <script>
+        if($('#isShowText').val() != ''){
+            document.getElementById("showModal").click();
+        }
+    </script>
 </html>
