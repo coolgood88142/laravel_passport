@@ -37,33 +37,42 @@ class TrialController extends Controller
 
         $where = [];
         $whereIn = [];
-        $trail = Trial::all();
+        $trail = [];
 
         if($queryCompany != null){
-            $trail = $trail->where('company_name', 'like', $queryCompany);
+            array_push($where, ['company_name', 'like', $queryCompany]);
         }
 
         if($queryUserName != null){
-            $trail = $trail->where('user_name', 'like', $queryUserName);
+            array_push($where, ['user_name', 'like', $queryUserName]);
         }
 
         if($queryEmail != null){
-            $trail = $trail->where('email', 'like', $queryEmail);
+            array_push($where, ['email', 'like', $queryEmail]);
         }
 
         if($queryCompany != null){
-            $trail = $trail->where('purpose_id', '='. $queryPurpose);
+            array_push($where, ['purpose_id', '=', $queryPurpose]);
         }
+
+        if(count($where) > 0){
+            $trail = Trial::where($where);
+        }
+
+        // $querySource = [
+        //     1, 2
+        // ];
+
+        // dd($querySource);
 
         if($querySource != null){
-            $trail = $trail->whereIn('source', $querySource);
+            $trail = $trail->whereIn('source', $querySource)->get();
+            dd($trail);
         }
 
-        dd($trail);
-
-        // $trail = $trail->get();
-
-        // dd($trail);
+        if(count($trail) == 0){
+            $trail = Trial::all();
+        }
 
         $newTrial = [];
 

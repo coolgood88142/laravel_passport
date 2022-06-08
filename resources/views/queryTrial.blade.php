@@ -34,7 +34,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-2">
-                                                    <select class="form-control" id="querySource" name="querySource">
+                                                    <select class="js-example-basic-multiple" multiple="multiple" id="querySource" name="querySource" style="width: 100%;">
                                                         @foreach($sourceData as $index => $value)
                                                             <option value="{{ $index }}">{{ $value }}</option>
                                                         @endforeach
@@ -81,10 +81,18 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
 		</div>
 		<script src="{{mix('js/app.js')}}"></script>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
+        <link href="vendor/select2/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="vendor/select2/dist/js/select2.min.js"></script>
     </body>
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
+        });
+    </script>
 </html>
