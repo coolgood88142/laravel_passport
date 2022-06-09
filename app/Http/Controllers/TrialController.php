@@ -51,26 +51,19 @@ class TrialController extends Controller
             array_push($where, ['email', 'like', $queryEmail]);
         }
 
-        if($queryCompany != null){
+        if($queryPurpose != null || $queryPurpose != ''){
             array_push($where, ['purpose_id', '=', $queryPurpose]);
         }
 
-        if(count($where) > 0){
-            $trail = Trial::where($where);
-        }
-
-        // $querySource = [
-        //     1, 2
-        // ];
-
-        // dd($querySource);
-
         if($querySource != null){
-            $trail = $trail->whereIn('source', $querySource)->get();
-            dd($trail);
+            foreach($querySource as $source){
+                array_push($where, ['source', 'like', $source]);
+            }
         }
 
-        if(count($trail) == 0){
+        if(count($where) > 0){
+            $trail = Trial::where($where)->get();
+        }else{
             $trail = Trial::all();
         }
 

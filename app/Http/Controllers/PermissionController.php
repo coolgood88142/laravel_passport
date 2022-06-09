@@ -50,7 +50,7 @@ class PermissionController extends Controller
     }
 
     public function getDefaultData(){
-        dd($this->companyPermissionGroup);
+        // dd($this->companyPermissionGroup);
         return view('permission', [
             'product' => $this->product,
             'user_permission' => $this->permission,

@@ -28,13 +28,14 @@
                                                 </div>
                                                 <div class="col-2">
                                                     <select class="form-control" id="queryPurpose" name="queryPurpose">
+                                                        <option value="">請選擇</option>
                                                         @foreach($purposeData as $index => $value)
                                                             <option value="{{ $index }}">{{ $value }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-2">
-                                                    <select class="js-example-basic-multiple" multiple="multiple" id="querySource" name="querySource" style="width: 100%;">
+                                                    <select class="js-example-basic-multiple" multiple="multiple" id="querySource" name="querySource[]" style="width: 100%;">
                                                         @foreach($sourceData as $index => $value)
                                                             <option value="{{ $index }}">{{ $value }}</option>
                                                         @endforeach
@@ -87,8 +88,8 @@
 		</div>
 		<script src="{{mix('js/app.js')}}"></script>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
-        <link href="vendor/select2/dist/css/select2.min.css" rel="stylesheet" />
-        <script src="vendor/select2/dist/js/select2.min.js"></script>
+        {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
     </body>
     <script>
         $(document).ready(function() {
