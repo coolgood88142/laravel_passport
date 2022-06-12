@@ -29,35 +29,35 @@ class TrialController extends Controller
     }
 
     public function queryTrialData(Request $request){
-        $queryCompany = $request->queryCompany;
-        $queryUserName = $request->queryUserName;
-        $queryEmail = $request->queryEmail;
-        $queryPurpose = $request->queryPurpose;
-        $querySource = $request->querySource;
+        $queryCompany = $request->queryCompany == null ? '' : $request->queryCompany;
+        $queryUserName = $request->queryUserName == null ? '' : $request->queryUserName;
+        $queryEmail = $request->queryEmail == null ? '' : $request->queryEmail;
+        $queryPurpose = $request->queryPurpose == null ? '' : $request->queryPurpose;
+        $querySource = $request->querySource == null ? [] : $request->querySource;
 
         $where = [];
         $whereIn = [];
         $trail = [];
 
-        if($queryCompany != null){
-            array_push($where, ['company_name', 'like', $queryCompany]);
+        if($queryCompany != ''){
+            array_push($where, ['company_name', 'like', '%' . $queryCompany . '%']);
         }
 
-        if($queryUserName != null){
-            array_push($where, ['user_name', 'like', $queryUserName]);
+        if($queryUserName != ''){
+            array_push($where, ['user_name', 'like', '%' . $queryUserName . '%']);
         }
 
-        if($queryEmail != null){
-            array_push($where, ['email', 'like', $queryEmail]);
+        if($queryEmail != ''){
+            array_push($where, ['email', 'like', '%' . $queryEmail . '%']);
         }
 
-        if($queryPurpose != null || $queryPurpose != ''){
+        if($queryPurpose != ''){
             array_push($where, ['purpose_id', '=', $queryPurpose]);
         }
 
-        if($querySource != null){
+        if(count($querySource) > 0){
             foreach($querySource as $source){
-                array_push($where, ['source', 'like', $source]);
+                array_push($where, ['source', 'like', '%' . $source . '%']);
             }
         }
 
@@ -108,6 +108,11 @@ class TrialController extends Controller
             'trialData' => $newTrial,
             'purposeData' => $this->purpose,
             'sourceData' => $this->source,
+            'queryCompany' => $queryCompany,
+            'queryUserName' => $queryUserName,
+            'queryEmail' => $queryEmail,
+            'queryPurpose' => $queryPurpose,
+            'querySource' => $querySource
         ]);
     }
 

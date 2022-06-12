@@ -18,26 +18,26 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-2">
-                                                    <input type="text" class="form-control" id="queryCompany" name="queryCompany" placeholder="公司">
+                                                    <input type="text" class="form-control" id="queryCompany" name="queryCompany" placeholder="公司" value="{{ $queryCompany }}">
                                                 </div>
                                                 <div class="col-2">
-                                                    <input type="text" class="form-control" id="queryUserName" name="queryUserName" placeholder="姓名">
+                                                    <input type="text" class="form-control" id="queryUserName" name="queryUserName" placeholder="姓名" value="{{ $queryUserName }}">
                                                 </div>
                                                 <div class="col-2">
-                                                    <input type="text" class="form-control" id="queryEmail" name="queryEmail" placeholder="email">
+                                                    <input type="text" class="form-control" id="queryEmail" name="queryEmail" placeholder="email" value="{{ $queryEmail }}">
                                                 </div>
                                                 <div class="col-2">
                                                     <select class="form-control" id="queryPurpose" name="queryPurpose">
                                                         <option value="">請選擇</option>
                                                         @foreach($purposeData as $index => $value)
-                                                            <option value="{{ $index }}">{{ $value }}</option>
+                                                            <option value="{{ $index }}" @if($queryPurpose == $index)  selected @endif>{{ $value }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                                 <div class="col-2">
                                                     <select class="js-example-basic-multiple" multiple="multiple" id="querySource" name="querySource[]" style="width: 100%;">
                                                         @foreach($sourceData as $index => $value)
-                                                            <option value="{{ $index }}">{{ $value }}</option>
+                                                            <option value="{{ $index }}" @if(count($querySource) > 0 && in_array($index, $querySource))  selected @endif>{{ $value }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -94,6 +94,7 @@
     <script>
         $(document).ready(function() {
             $('.js-example-basic-multiple').select2();
+            // $('.js-example-basic-multiple').val([1,2,3]).change();
         });
     </script>
 </html>

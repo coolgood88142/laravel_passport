@@ -25,6 +25,11 @@
                             ['showFooter' => true])
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <button type="submit" class="btn btn-primary" onclick="window.location.href='/permission'">回權益選擇頁</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 		</div>

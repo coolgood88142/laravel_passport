@@ -43,14 +43,47 @@ class PermissionController extends Controller
                     $this->companyPermissionGroup[$id] = $companyPermissionData->first();
                 }
             }
-
-        }else{
-            $this->showText = '請先登入後再選擇權益!';
         }
+        // }else{
+        //     $this->showText = '請先登入後再選擇權益!';
+        // }
     }
 
     public function getDefaultData(){
-        // dd($this->companyPermissionGroup);
+        foreach(Product::all() as $data){
+            $this->product[$data->id]['id'] = $data->id;
+            $this->product[$data->id]['name'] = $data->name;
+        }
+
+        if(Auth::check()){
+            $userId = Auth::user()->id;
+            $companyId = Auth::user()->company_id;
+            $this->permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
+
+            foreach($this->product as $id => $value){
+                $companyPermissionData = CompanyPermission::where('company_id', $companyId)
+                    ->where('product_id', $id)->get();
+
+                if($companyPermissionData->count() > 0){
+                    $this->companyPermission[$id] = $companyPermissionData;
+                    $this->companyPermissionGroup[$id] = $companyPermissionData->first();
+                }
+            }
+
+        }else{
+            dd('有近來');
+            $this->showText = '請先登入後再選擇權益!';
+        }
+
+        // dd([
+        //     'product' => $this->product,
+        //     'user_permission' => $this->permission,
+        //     'company_permission' => $this->companyPermission,
+        //     'company_permission_group' => $this->companyPermissionGroup,
+        //     'show_text' => $this->showText,
+        //     'has_login' => Auth::check()
+        // ]);
+
         return view('permission', [
             'product' => $this->product,
             'user_permission' => $this->permission,
@@ -103,12 +136,55 @@ class PermissionController extends Controller
 
             if($showText != ''){
                 $showText = substr($showText, 0, -1);
+                $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
             }
         }else if(!Auth::check() && $nowProduct == null){
             $showText = '請選擇權益!';
-        }else{
+        }else if(!Auth::check()){
             $showText = '請先登入後再選擇權益!';
         }
+
+        $productData = [];
+        if(Auth::check()){
+            $userId = Auth::user()->id;
+            $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
+        }
+
+        // return view('mainPermission', [
+        //     'product' => $this->product,
+        //     'permission' => $permission,
+        //     'showText' => $showText
+        // ]);
+
+        foreach(Product::all() as $data){
+            $this->product[$data->id]['id'] = $data->id;
+            $this->product[$data->id]['name'] = $data->name;
+        }
+
+        if(Auth::check()){
+            $userId = Auth::user()->id;
+            $companyId = Auth::user()->company_id;
+            $this->permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
+
+            foreach($this->product as $id => $value){
+                $companyPermissionData = CompanyPermission::where('company_id', $companyId)
+                    ->where('product_id', $id)->get();
+
+                if($companyPermissionData->count() > 0){
+                    $this->companyPermission[$id] = $companyPermissionData;
+                    $this->companyPermissionGroup[$id] = $companyPermissionData->first();
+                }
+            }
+        }
+
+        // dd([
+        //     'product' => $this->product,
+        //     'user_permission' => $this->permission,
+        //     'company_permission' => $this->companyPermission,
+        //     'company_permission_group' => $this->companyPermissionGroup,
+        //     'show_text' => $showText,
+        //     'has_login' => Auth::check()
+        // ]);
 
         return view('permission', [
             'product' => $this->product,
@@ -118,6 +194,7 @@ class PermissionController extends Controller
             'show_text' => $showText,
             'has_login' => Auth::check()
         ]);
+
     }
 
     public function saveUserPermission($userId, $value, $showText){

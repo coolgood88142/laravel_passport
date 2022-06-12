@@ -60,20 +60,21 @@
                     @endif
 
                     @if($show_text != '')
-                        <div class="modal fade" id="modal-default">
+                        <div class="modal fade show" id="modal-default">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
+                                        <h4 class="modal-title">提示訊息</h4>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">×</span></button>
-                                        <h4 class="modal-title">提示訊息</h4>
                                     </div>
                                     <div class="modal-body">
                                         <p>{{ $show_text }}</p>
                                     </div>
                                     <div class="modal-footer">
                                         @if($has_login)
-                                            <button type="button" class="btn btn-primary pull-right" data-dismiss="modal">關閉</button>
+                                            <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">關閉</button>
+                                            <button type="button" class="btn btn btn-success" onclick="window.location.href='/mainPermission'">進入學員權益頁面</button>
                                         @else
                                             <button type="button" class="btn btn-primary pull-right" onclick="window.location.href='/login'">重新登入</button>
                                         @endif
