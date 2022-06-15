@@ -51,13 +51,13 @@
 											@endforeach
 										<button type="submit" class="btn btn-primary" >送出</button>
                                     </form>
-                                    <button type="button" class="btn btn-default" id="showModal" data-toggle="modal" data-target="#modal-default" style="display:none;">顯示視窗</button>
-                                    <input type="hidden" id="isShowText" value="{{ $show_text }}">
 								</div>
 							</div>
 						</div>
 					</div>
                     @endif
+                    <button type="button" class="btn btn-default" id="showModal" data-toggle="modal" data-target="#modal-default" style="display:none;">顯示視窗</button>
+                    <input type="hidden" id="isShowText" value="{{ $show_text }}">
 
                     @if($show_text != '')
                         <div class="modal fade show" id="modal-default">
@@ -73,7 +73,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         @if($has_login)
-                                            <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">關閉</button>
+                                            {{-- <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">關閉</button> --}}
                                             <button type="button" class="btn btn btn-success" onclick="window.location.href='/mainPermission'">進入學員權益頁面</button>
                                         @else
                                             <button type="button" class="btn btn-primary pull-right" onclick="window.location.href='/login'">重新登入</button>

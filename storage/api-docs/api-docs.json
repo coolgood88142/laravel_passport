@@ -163,7 +163,10 @@
                     "200": {
                         "description": "Successful operation"
                     }
-                }
+                },
+                "security": [
+                    "apiKey"
+                ]
             }
         },
         "/api/user": {
@@ -210,8 +213,10 @@
         "passport": {
             "type": "oauth2",
             "description": "Laravel passport oauth2 security.",
-            "flow": "password",
-            "tokenUrl": "http://localhost/oauth/token",
+            "flow": "authorizationCode",
+            "authorizationUrl": "http://127.0.0.1:8000/authorizationCode",
+            "tokenUrl": "http://127.0.0.1:8000/oauth/token",
+            "refreshUrl": "http://127.0.0.1:8000/token/refresh",
             "scopes": []
         }
     }

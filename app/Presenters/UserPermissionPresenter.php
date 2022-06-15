@@ -29,34 +29,22 @@ class UserPermissionPresenter
     }
 
     public function checkHeader($productData){
-        if((in_array('google', $productData) || in_array('fb', $productData)  || in_array('twitter', $productData))){
-            return true;
-        }else if( (in_array('fb', $productData) || in_array('twitter', $productData))){
-            return true;
-        }else if(in_array('fb', $productData)){
-            return true;
-        }
-
-        return false;
+        return in_array('google', $productData) || in_array('fb', $productData)  || in_array('twitter', $productData);
     }
 
-    public function checkContent($productData, $nowData){
-        if($nowData == 'A' && (in_array('google', $productData)  || in_array('fb', $productData))){
-            return true;
-        }else if($nowData == 'B' && in_array('fb', $productData)){
-            return true;
-        }else if($nowData == 'C' && (in_array('fb', $productData) || in_array('twitter', $productData))){
-            return true;
-        }
+    public function checkContentA($productData){
+        return (in_array('google', $productData)  || in_array('fb', $productData));
+    }
 
-        return false;
+    public function checkContentB($productData){
+        return in_array('fb', $productData);
+    }
+
+    public function checkContentC($productData){
+        return (in_array('fb', $productData) || in_array('twitter', $productData));
     }
 
     public function checkFooter($productData){
-        if(in_array('google', $productData) || in_array('fb', $productData)  || in_array('twitter', $productData)){
-            return true;
-        }
-
-        return false;
+        return in_array('google', $productData) || in_array('fb', $productData)  || in_array('twitter', $productData);
     }
 }

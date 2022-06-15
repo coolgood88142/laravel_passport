@@ -44,9 +44,6 @@ class PermissionController extends Controller
                 }
             }
         }
-        // }else{
-        //     $this->showText = '請先登入後再選擇權益!';
-        // }
     }
 
     public function getDefaultData(){
@@ -71,18 +68,8 @@ class PermissionController extends Controller
             }
 
         }else{
-            dd('有近來');
             $this->showText = '請先登入後再選擇權益!';
         }
-
-        // dd([
-        //     'product' => $this->product,
-        //     'user_permission' => $this->permission,
-        //     'company_permission' => $this->companyPermission,
-        //     'company_permission_group' => $this->companyPermissionGroup,
-        //     'show_text' => $this->showText,
-        //     'has_login' => Auth::check()
-        // ]);
 
         return view('permission', [
             'product' => $this->product,

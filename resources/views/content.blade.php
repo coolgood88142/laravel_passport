@@ -3,15 +3,15 @@
         <h3 class="box-title">Content</h3>
     </div>
     <div class="box-body">
-        @if($presenter->checkContent($productData, 'A'))
+        @if($presenter->checkContentA($productData))
             @include('content_a')
         @endif
 
-        @if($presenter->checkContent($productData, 'B'))
+        @if($presenter->checkContentB($productData))
             @include('content_b')
         @endif
 
-        @if($presenter->checkContent($productData, 'C'))
+        @if($presenter->checkContentC($productData))
             @include('content_c')
         @endif
     </div>
