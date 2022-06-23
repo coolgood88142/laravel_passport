@@ -13,8 +13,8 @@ use Illuminate\Support\Str;
      *     tags={"UserInfo"},
      *     produces={"application/json"},
      *     security={
-    *          {"passport":{}}
-    *      },
+     *          {"Bearer":{}}
+     *     },
      *     @SWG\Response(
      *          response=200,
      *          description="Successful operation",

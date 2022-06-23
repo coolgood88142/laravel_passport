@@ -106,4 +106,79 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+    /**
+     *  @SWG\Post(
+     *      path="/getBearerToken",
+     *      tags={"getBearerToken"},
+     *      summary="getBearerToken",
+     *      operationId="getBearerToken",
+     *      consumes={"application/json"},
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *           name="email",
+     *           in="query",
+     *           required=true,
+     *           type="string"
+     *      ),
+     *      @SWG\Parameter(
+     *           name="password",
+     *           in="query",
+     *           required=true,
+     *           type="string"
+     *      ),
+     *      @SWG\Response(
+     *           response=200,
+     *           description="Success"
+     *      ),
+     *      @SWG\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *      ),
+     *      @SWG\Response(
+     *         response=400,
+     *         description="Bad Request"
+     *      ),
+     *      @SWG\Response(
+     *         response=404,
+     *         description="not found"
+     *      ),
+     *      @SWG\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *      )
+     *  )
+     *
+     */
+    public function getBearerToken(Request $request){
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+            'remember_me' => 'boolean'
+        ]);
+
+        $credentials = request(['email', 'password']);
+
+        if(!Auth::attempt($credentials))
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+
+        $user = $request->user();
+
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->token;
+
+        // if ($request->remember_me)
+        //     $token->expires_at = Carbon::now()->addWeeks(1);
+        $token->expires_at = Carbon::now()->addWeeks(1);
+        $token->save();
+
+        return [
+            'bearerToken' => $request->bearerToken(),
+            'expires_at' => Carbon::parse(
+                $tokenResult->token->expires_at
+            )->toDateTimeString()
+        ];
+    }
 }

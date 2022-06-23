@@ -34,7 +34,9 @@ return [
         |--------------------------------------------------------------------------
         */
 
-        'oauth2_callback' => 'api/oauth2-callback',
+        'oauth2_callback' => '/getAuthorizationCode',
+
+        // 'client_id' => 19,
 
         /*
         |--------------------------------------------------------------------------
@@ -177,13 +179,20 @@ return [
         'passport' => [ // Unique name of security
             'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
             'description' => 'Laravel passport oauth2 security.',
+            'in' => 'header',
             'flow' => 'authorizationCode',
-                 // The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or "accessCode".
-            'authorizationUrl' => 'http://127.0.0.1:8000/authorizationCode',
+            'authorizationUrl' => 'http://127.0.0.1:8080/authorize',
             "tokenUrl" => 'http://127.0.0.1:8000/oauth/token',
-            "refreshUrl" => 'http://127.0.0.1:8000/token/refresh',
             "scopes" => []
         ],
+
+        // 'passport' => [
+        //     'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+        //     'description' => 'Laravel passport oauth2 security.',
+        //     'flow' => 'password',
+        //     "tokenUrl" => 'http://127.0.0.1:8000/oauth/token',
+        //     "scopes" => []
+        // ]
     ],
 
     /*

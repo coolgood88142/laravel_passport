@@ -28,7 +28,9 @@ use Illuminate\Routing\Controller as BaseController;
  *          summary="取得Access Token",
  *          tags={"AccessToken"},
  *          produces={"application/json"},
- *          security={"apiKey"},
+ *          security={
+ *               {"Bearer":{}}
+ *          },
  *          @SWG\Parameter(
  *               name="grant_type",
  *               in="formData",

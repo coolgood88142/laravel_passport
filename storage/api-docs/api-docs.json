@@ -9,13 +9,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/login": {
+        "/getBearerToken": {
             "post": {
                 "tags": [
-                    "Login"
+                    "getBearerToken"
                 ],
-                "summary": "Login",
-                "operationId": "login",
+                "summary": "getBearerToken",
+                "operationId": "getBearerToken",
                 "consumes": [
                     "application/json"
                 ],
@@ -25,13 +25,13 @@
                 "parameters": [
                     {
                         "name": "email",
-                        "in": "formData",
+                        "in": "query",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "name": "password",
-                        "in": "formData",
+                        "in": "query",
                         "required": true,
                         "type": "string"
                     }
@@ -104,6 +104,18 @@
                 "responses": {
                     "200": {
                         "description": "Successful creation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
                     }
                 },
                 "security": [
@@ -165,7 +177,9 @@
                     }
                 },
                 "security": [
-                    "apiKey"
+                    {
+                        "Bearer": []
+                    }
                 ]
             }
         },
@@ -197,7 +211,7 @@
                 },
                 "security": [
                     {
-                        "passport": []
+                        "Bearer": []
                     }
                 ]
             }
@@ -213,10 +227,10 @@
         "passport": {
             "type": "oauth2",
             "description": "Laravel passport oauth2 security.",
+            "in": "header",
             "flow": "authorizationCode",
-            "authorizationUrl": "http://127.0.0.1:8000/authorizationCode",
+            "authorizationUrl": "http://127.0.0.1:8080/authorize",
             "tokenUrl": "http://127.0.0.1:8000/oauth/token",
-            "refreshUrl": "http://127.0.0.1:8000/token/refresh",
             "scopes": []
         }
     }

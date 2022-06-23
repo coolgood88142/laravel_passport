@@ -61,6 +61,22 @@ class AuthorizationController
      *     @SWG\Response(
      *          response="200",
      *          description="Successful creation"
+     *     ),
+     *     @SWG\Response(
+     *        response=401,
+     *        description="Unauthenticated"
+     *     ),
+     *     @SWG\Response(
+     *        response=400,
+     *        description="Bad Request"
+     *     ),
+     *     @SWG\Response(
+     *        response=404,
+     *        description="not found"
+     *     ),
+     *     @SWG\Response(
+     *        response=403,
+     *        description="Forbidden"
      *     )
      * )
      */
