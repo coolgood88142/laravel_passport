@@ -17,6 +17,7 @@ class CreateCompanyPermissionTable extends Migration
             $table->bigIncrements('id');
             $table->integer('company_id');
             $table->integer('product_id');
+            $table->integer('amount');
             $table->datetime('start_datetime');
             $table->datetime('end_datetime');
             $table->timestamps();
