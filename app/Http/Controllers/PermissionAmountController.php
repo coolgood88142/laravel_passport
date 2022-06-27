@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\UserPermission;
 use App\Models\UserPermissionLog;
 use App\Presenters\UserPermissionPresenter;
+use Carbon\Carbon;
 
 class PermissionAmountController extends Controller
 {
@@ -35,6 +36,7 @@ class PermissionAmountController extends Controller
         $queryCompanyId = $request->queryCompanyId == null ? '' : $request->queryCompanyId;
         $queryCompanyName = $request->queryCompanyName == null ? '' : $request->queryCompanyName;
         $queryProduct = $request->queryProduct == null ? '' : $request->queryProduct;
+        $queryOrdData = $request->queryOrdData == null ? '' : $request->queryOrdData;
 
         $where = [];
 
@@ -64,6 +66,12 @@ class PermissionAmountController extends Controller
             $this->company[$data->id]['name'] = $data->name;
         }
 
+        $now = Carbon::now('Asia/Taipei')->toDateTimeString();
+        if($queryOrdData != 'Y'){
+            array_push($where, ['start_datetime', '<=', $now ]);
+            array_push($where, ['end_datetime', '>=', $now ]);
+        }
+
         $companyPermission = null;
         if(count($where) > 0){
             $companyPermission = CompanyPermission::where($where)->get();
@@ -85,6 +93,7 @@ class PermissionAmountController extends Controller
             $companyPermission = [
                 'company_id' =>  $company->id,
                 'company_name' =>  $company->name,
+                'product_id' =>  $product->id,
                 'product_name' =>  $product->name,
                 'start_datetime' =>  $data->start_datetime,
                 'end_datetime' =>  $data->end_datetime,
@@ -100,158 +109,8 @@ class PermissionAmountController extends Controller
             'queryCompanyId' => $queryCompanyId,
             'queryCompanyName' => $queryCompanyName,
             'queryProduct' => $queryProduct,
+            'queryOrdData' => $queryOrdData,
             'permissionAmount' => $this->permissionAmount
         ]);
-    }
-
-    public function savePermission(Request $request){
-        $permission = [];
-        $nowPermission = [];
-        $showText = '';
-        $nowProduct = $request->product!= null ? $request->product : [];
-        if(Auth::check()){
-            $userId = Auth::user()->id;
-            $companyId = Auth::user()->company_id;
-            $permission = UserPermission::where('user_id', $userId);
-            $count = $permission->count();
-
-            $del = [];
-            foreach($this->product as $index => $data){
-                $companyPermission = CompanyPermission::where('company_id', $companyId)
-                    ->where('product_id', $data['id'])->get();
-
-                if($companyPermission->count() > 0){
-                    foreach($companyPermission as $value){
-                        $permissionData = UserPermission::where('user_id', $userId)
-                            ->where('product_id', $value->product_id)
-                            ->where('start_datetime', $value->start_datetime)
-                            ->where('end_datetime', $value->end_datetime)
-                            ->first();
-                        if($count > 0 || $permissionData == null){
-                            if($permissionData != null && $nowProduct == []){
-                                $this->deleteUserPermission($permissionData->id);
-                                $showText = $this->saveUserPermissionLog($userId, $value, $permissionData, $showText);
-                            }else if($permissionData != null && !in_array($value->id, $nowProduct)){
-                                $this->deleteUserPermission($permissionData->id);
-                                $showText = $this->saveUserPermissionLog($userId, $value, $permissionData, $showText);
-                            }else if($permissionData == null && in_array($value->id, $nowProduct)){
-                                $showText = $this->saveUserPermission($userId, $value, $showText);
-                            }
-                        }else if(in_array($value->id, $nowProduct)){
-                            $showText = $this->saveUserPermission($userId, $value, $showText);
-                        }
-                    }
-                }
-            }
-
-            if($showText != ''){
-                $showText = substr($showText, 0, -1);
-                $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
-            }
-        }else if(!Auth::check() && $nowProduct == null){
-            $showText = '請選擇權益!';
-        }else if(!Auth::check()){
-            $showText = '請先登入後再選擇權益!';
-        }
-
-        $productData = [];
-        if(Auth::check()){
-            $userId = Auth::user()->id;
-            $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
-        }
-
-        // return view('mainPermission', [
-        //     'product' => $this->product,
-        //     'permission' => $permission,
-        //     'showText' => $showText
-        // ]);
-
-        foreach(Product::all() as $data){
-            $this->product[$data->id]['id'] = $data->id;
-            $this->product[$data->id]['name'] = $data->name;
-        }
-
-        if(Auth::check()){
-            $userId = Auth::user()->id;
-            $companyId = Auth::user()->company_id;
-            $this->permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
-
-            foreach($this->product as $id => $value){
-                $companyPermissionData = CompanyPermission::where('company_id', $companyId)
-                    ->where('product_id', $id)->get();
-
-                if($companyPermissionData->count() > 0){
-                    $this->companyPermission[$id] = $companyPermissionData;
-                    $this->companyPermissionGroup[$id] = $companyPermissionData->first();
-                }
-            }
-        }
-
-        // dd([
-        //     'product' => $this->product,
-        //     'user_permission' => $this->permission,
-        //     'company_permission' => $this->companyPermission,
-        //     'company_permission_group' => $this->companyPermissionGroup,
-        //     'show_text' => $showText,
-        //     'has_login' => Auth::check()
-        // ]);
-
-        return view('permission', [
-            'product' => $this->product,
-            'user_permission' => $this->permission,
-            'company_permission' => $this->companyPermission,
-            'company_permission_group' => $this->companyPermissionGroup,
-            'show_text' => $showText,
-            'has_login' => Auth::check()
-        ]);
-
-    }
-
-    public function saveUserPermission($userId, $value, $showText){
-        $UserPermission = new UserPermission();
-        $UserPermission->user_id = $userId;
-        $UserPermission->product_id = $value->product_id;
-        $UserPermission->start_datetime = $value->start_datetime;
-        $UserPermission->end_datetime = $value->end_datetime;
-        $UserPermission->save();
-        $showText = $showText . '新增' . $this->product[$value->product_id]['name'] . '(' . $value->start_datetime . '-' . $value->end_datetime . ')' . ',';
-        return $showText;
-    }
-
-    public function saveUserPermissionLog($userId, $value, $permissionData, $showText){
-        $UserPermission = new UserPermissionLog();
-        $UserPermission->user_id = $userId;
-        $UserPermission->product_id = $value->product_id;
-        $UserPermission->start_datetime = $permissionData->start_datetime;
-        $UserPermission->end_datetime = $permissionData->end_datetime;
-        $UserPermission->save();
-        $showText = $showText . '移除' . $this->product[$value->product_id]['name'] . '(' . $permissionData->start_datetime . '-' . $permissionData->end_datetime . ')' . ',';
-        return $showText;
-    }
-
-    public function deleteUserPermission($id){
-        UserPermission::where('id', $id)->delete();
-    }
-
-    public function showUserPermissionBlade(){
-        $productData = [];
-        if(Auth::check()){
-            $userId = Auth::user()->id;
-            $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
-        }else{
-            return '請先登入後再選擇權益!';
-        }
-
-        // $UserPermissionPresenter = new UserPermissionPresenter();
-
-        // $data = $UserPermissionPresenter->matchProductId($permission, $this->product);
-
-
-        // dd($UserPermissionPresenter->checkHeader($data, 'A'));
-
-        // @if($presenter->checkHeader($presenter->matchProductId($permission, $product), 'A')
-
-        return view('mainPermission', ['product' => $this->product, 'permission' => $permission]);
-
     }
 }

@@ -7,6 +7,9 @@
 require('./bootstrap');
 require('admin-lte');
 require('select2');
+require('jquery');
+require('moment');
+require('bootstrap-datepicker');
 
 window.Vue = require('vue');
 

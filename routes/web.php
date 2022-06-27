@@ -81,3 +81,5 @@ Route::post('/saveTrial', 'TrialController@saveTrialData')->name('saveTrial');
 Route::post('/getBearerToken', 'AuthController@getBearerToken')->name('getBearerToken');
 
 Route::get('/queryPermissionAmount', 'PermissionAmountController@queryPermissionAmountData')->name('queryPermissionAmount');
+
+Route::get('/getUserPermission', 'PermissionController@getUserPermission')->name('getUserPermission');
