@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\User;
 use App\Models\Company;
 use App\Models\CompanyPermission;
 use App\Models\Product;
@@ -79,24 +80,51 @@ class PermissionAmountController extends Controller
             $companyPermission = CompanyPermission::all();
         }
 
+        $remainAmount = 0;
         foreach($companyPermission as $data){
             $company = Company::where('id', $data->company_id)->first();
             $product = Product::where('id', $data->product_id)->first();
+            $user = User::select('id')->where('company_id', $data->company_id)->get()->modelKeys();
+            $startDatetime = $data->start_datetime;
+            $endDatetime = $data->end_datetime;
+
             $userPermission = UserPermission::where('product_id', $data->product_id)
-                            ->where('start_datetime', $data->start_datetime)
-                            ->where('end_datetime', $data->end_datetime)
-                            ->get();
+                ->where('start_datetime', $startDatetime)
+                ->where('end_datetime', $endDatetime)
+                ->whereIn('user_id', $user)
+                ->get();
 
             $userPermissionCount = $userPermission->count();
+            $UserPermissionPresenter = new UserPermissionPresenter();
+            $matchNowTime = $UserPermissionPresenter->matchNowTime($startDatetime, $endDatetime);
             $remainAmount = $data->amount - $userPermissionCount;
+
+            //確認目前時間有在userPermission的時段範圍內
+            if($matchNowTime){
+                //查詢產品的使用時段範圍內，有沒有2筆以上
+                $otherUserPermission = UserPermission::where('product_id', $data->product_id)
+                    ->where('start_datetime', '<=', $now)
+                    ->where('end_datetime', '>=', $now)
+                    ->get();
+
+                //TODO 要怎麼做才可以在畫面，顯示有包含今天日期的使用時段?
+                //目前的作法是有重疊的情況，就要把兩種使用時段的資料合併成一筆
+                if($otherUserPermission->count() > 2){
+                    foreach($otherUserPermission as $orther){
+                        if($orther->start_datetime != $startDatetime || $orther->end_datetime != $endtDatetime){
+
+                        }
+                    }
+                }
+            }
 
             $companyPermission = [
                 'company_id' =>  $company->id,
                 'company_name' =>  $company->name,
                 'product_id' =>  $product->id,
                 'product_name' =>  $product->name,
-                'start_datetime' =>  $data->start_datetime,
-                'end_datetime' =>  $data->end_datetime,
+                'start_datetime' =>  $startDatetime,
+                'end_datetime' =>  $endDatetime,
                 'use_amount' => $userPermissionCount,
                 'remain_amount' => $remainAmount,
             ];

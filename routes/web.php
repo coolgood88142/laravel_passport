@@ -83,3 +83,5 @@ Route::post('/getBearerToken', 'AuthController@getBearerToken')->name('getBearer
 Route::get('/queryPermissionAmount', 'PermissionAmountController@queryPermissionAmountData')->name('queryPermissionAmount');
 
 Route::get('/getUserPermission', 'PermissionController@getUserPermission')->name('getUserPermission');
+
+Route::get('editCompany', 'CompanyController@editCompany')->name('editCompany');
