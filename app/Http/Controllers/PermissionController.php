@@ -295,7 +295,7 @@ class PermissionController extends Controller
         $startDatetime = $request->start_datetime == null ? '' : $request->start_datetime;
         $endDatetime = $request->end_datetime == null ? '' : $request->end_datetime;
         $userName = $request->user_name == null ? '' : $request->user_name;
-        $data = [];
+        $UserPermissionDetails = [];
 
         $userPermission = UserPermission::where('company_id', $companyId)
                             ->where('product_id', $productId)
@@ -305,11 +305,16 @@ class PermissionController extends Controller
 
         if($userPermission != null){
             foreach($userPermission as $permission){
-                $user = User::where('name', 'like', '%' . $userPermission->user_id . '%')->first();
-                array_push($data, [
-                    'name' => $user->name,
-                    'permissiomDate' => $userPermission->createed_at,
-                ]);
+                $user = User::where('name', 'like', '%' . $userName. '%')->get();
+
+                foreach($user as $data){
+                    array_push($userPermissionDetails, [
+                        'id' => $data->id,
+                        'name' => $data->name,
+                        'permissiomDate' => $userPermission->createed_at,
+                    ]);
+                }
+
             }
         }
 

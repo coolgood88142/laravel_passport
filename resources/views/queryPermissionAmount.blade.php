@@ -72,7 +72,7 @@
                                                                     {{ $permission['use_amount'] }}
                                                                 </div>
                                                                 <div class="row justify-content-center">
-                                                                    <input type="button" class="btn btn-primary" value="明細" onclick="openUserPermissionModal({{$permission['company_id']}}, {{$permission['product_id']}}, {{$permission['start_datetime']}}, {{$permission['end_datetime']}})">
+                                                                    <input type="button" class="btn btn-primary" value="明細" onclick="openUserPermissionModal({{ $permission['company_id'] }}, {{ $permission['product_id'] }}, '{{ $permission['product_name'] }}', '{{ $permission['start_datetime'] }}', '{{ $permission['end_datetime'] }}', null )" />
                                                                 </div>
                                                             </th>
                                                             <th>{{ $permission['remain_amount'] }}</th>
@@ -104,7 +104,7 @@
                                     <input type="hidden" id="modalProductId" value="">
                                     <input type="hidden" id="modalStartDatetime" value="">
                                     <input type="hidden" id="modalEndDatetime" value="">
-                                    <input type="hidden" id="modalUserName" value="">
+                                    <input type="hidden" id="modalUserId" value="">
                                 </div>
                             </div>
                         </div>
@@ -118,25 +118,32 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
     </body>
     <script>
-        function openUserPermissionModal(company_id, product_id, start_datetime, end_datetime, user_name){
+        function openUserPermissionModal(company_id, product_id, product_name, start_datetime, end_datetime){
+            console.log(company_id);
             $('#modalCompanyId').val(company_id);
             $('#modalProductId').val(product_id);
             $('#modalStartDatetime').val(start_datetime);
             $('#modalEndDatetime').val(end_datetime);
-            $('#modalUserName').val(user_name);
 
-            // $()
+            $('.modal-title').text(
+                product_name  + '：' + '使用時段' + start_datetime + '-' + end_datetime
+            );
+
+            $('.modal-body').text(
+
+            );
+
             $('#modal-default').modal('show');
         }
 
-        function openUserPermissionModal(company_id, product_id, start_datetime, end_datetime){
+        function getUserPermission(company_id, product_id, start_datetime, end_datetime){
             axios.get("/getUserPermission?company_id="+company_id +"&product_id=" + product_id + "&start_datetime=" + start_datetime +   "&end_datetime=" + end_datetime + "&page=" + page).then((response) => {
 				this.data = response.data
                 let table = '';
 
-                foreach(this.data as){
+                // foreach(this.data as){
 
-                }
+                // }
 
                 console.log(this.data);
 			}).catch((error) => {

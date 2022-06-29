@@ -84,14 +84,18 @@ class PermissionAmountController extends Controller
         foreach($companyPermission as $data){
             $company = Company::where('id', $data->company_id)->first();
             $product = Product::where('id', $data->product_id)->first();
-            $user = User::select('id')->where('company_id', $data->company_id)->get()->modelKeys();
+            $userData = User::select('id')->where('company_id', $data->company_id)->get();
             $startDatetime = $data->start_datetime;
             $endDatetime = $data->end_datetime;
+            $userArray = [];
+            foreach($userData as $user){
+                array_push($userArray, $user->id);
+            }
 
             $userPermission = UserPermission::where('product_id', $data->product_id)
                 ->where('start_datetime', $startDatetime)
                 ->where('end_datetime', $endDatetime)
-                ->whereIn('user_id', $user)
+                ->whereIn('user_id', $userArray)
                 ->get();
 
             $userPermissionCount = $userPermission->count();
@@ -99,23 +103,56 @@ class PermissionAmountController extends Controller
             $matchNowTime = $UserPermissionPresenter->matchNowTime($startDatetime, $endDatetime);
             $remainAmount = $data->amount - $userPermissionCount;
 
-            //確認目前時間有在userPermission的時段範圍內
+            // //確認今天日期有沒有在目前產品的使用時段內
             if($matchNowTime){
-                //查詢產品的使用時段範圍內，有沒有2筆以上
-                $otherUserPermission = UserPermission::where('product_id', $data->product_id)
+                //查詢有沒有相同產品的使用時段範圍，也在今天日期
+                $otherUserPermission = UserPermission::select('start_datetime', 'end_datetime')->where('product_id', $data->product_id)
+                    ->whereIn('user_id', $userArray)
                     ->where('start_datetime', '<=', $now)
                     ->where('end_datetime', '>=', $now)
+                    ->where('start_datetime', '!=', $startDatetime)
+                    ->where('end_datetime', '!=', $endDatetime)
                     ->get();
 
-                //TODO 要怎麼做才可以在畫面，顯示有包含今天日期的使用時段?
-                //目前的作法是有重疊的情況，就要把兩種使用時段的資料合併成一筆
-                if($otherUserPermission->count() > 2){
-                    foreach($otherUserPermission as $orther){
-                        if($orther->start_datetime != $startDatetime || $orther->end_datetime != $endtDatetime){
-
+                //有的話，要計算有多少的沒選到該權益的學員數量
+                if($otherUserPermission->count() > 0){
+                    foreach($userPermission as $permission){
+                        if(in_array($permission->user_id, $userArray)){
+                            $key = array_search($permission->user_id, $userArray);
+                            unset($userArray[$key]);
                         }
                     }
+
+                    $remainAmount = $data->amount - count($userArray);
                 }
+
+
+                // //查詢有沒有其他產品也在今天日期的使用時段範圍內
+                // $otherUserPermission = UserPermission::select('start_datetime', 'end_datetime')->where('product_id', $data->product_id)
+                //     ->whereIn('user_id', $userArray)
+                //     ->where('start_datetime', '<=', $now)
+                //     ->where('end_datetime', '>=', $now)
+                //     ->where('start_datetime', '!=', $startDatetime)
+                //     ->where('end_datetime', '!=', $endDatetime)
+                //     ->get();
+
+                // dd($otherUserPermission);
+                // if($otherUserPermission->count() > 0){
+                //     $userCount = User::where('company_id', $data->company_id)
+                //         ->get()
+                //         ->count();
+
+                //     $remainAmount = $data->amount - count($userArray);
+                // }
+            //     //TODO 要怎麼做才可以在畫面，顯示有包含今天日期的使用時段?
+            //     //目前的作法是有重疊的情況，就要把兩種使用時段的資料合併成一筆
+            //     if($otherUserPermission->count() > 2){
+            //         foreach($otherUserPermission as $orther){
+            //             if($orther->start_datetime != $startDatetime || $orther->end_datetime != $endtDatetime){
+
+            //             }
+            //         }
+            //     }
             }
 
             $companyPermission = [
