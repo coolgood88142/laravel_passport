@@ -62,7 +62,7 @@
                 ],
                 "summary": "取得authorizationCode",
                 "produces": [
-                    "application/json"
+                    "text/html,application/xhtml+xml,application/xml;"
                 ],
                 "parameters": [
                     {
@@ -90,7 +90,6 @@
                         "name": "scope",
                         "in": "query",
                         "description": "存取資料範圍",
-                        "required": false,
                         "type": "string"
                     },
                     {
@@ -211,7 +210,7 @@
                 },
                 "security": [
                     {
-                        "Bearer": []
+                        "userInfo Bearer": []
                     }
                 ]
             }
@@ -220,6 +219,11 @@
     "definitions": {},
     "securityDefinitions": {
         "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "userInfo Bearer": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

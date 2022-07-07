@@ -23,6 +23,12 @@ use Illuminate\Routing\Controller as BaseController;
  *       in="header",
  *       name="Authorization",
  *     ),
+ *     @SWG\SecurityScheme(
+ *       securityDefinition="userInfo Bearer",
+ *       type="apiKey",
+ *       in="header",
+ *       name="Authorization",
+ *     ),
  *     @SWG\Post(
  *          path="/oauth/token",
  *          summary="取得Access Token",

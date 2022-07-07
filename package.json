@@ -18,6 +18,8 @@
         "cross-env": "^7.0",
         "jquery": "^3.2",
         "laravel-mix": "^5.0.1",
+        "laravel-vue-datatable": "^0.6.0",
+        "laravel-vue-pagination": "^2.3.1",
         "lodash": "^4.17.19",
         "moment": "^2.29.3",
         "popper.js": "^1.12",

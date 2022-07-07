@@ -5,7 +5,7 @@
     <body>
 		<div class="wrapper">
             <div class="content-wrapper">
-                <div class="contnet">
+                <div  id="app" class="contnet">
                     <div class="row">
                         <div class="col-sm-10">
                             <div class="box">
@@ -72,7 +72,7 @@
                                                                     {{ $permission['use_amount'] }}
                                                                 </div>
                                                                 <div class="row justify-content-center">
-                                                                    <input type="button" class="btn btn-primary" value="明細" onclick="openUserPermissionModal({{ $permission['company_id'] }}, {{ $permission['product_id'] }}, '{{ $permission['product_name'] }}', '{{ $permission['start_datetime'] }}', '{{ $permission['end_datetime'] }}', null )" />
+                                                                    <input type="button" class="btn btn-primary" value="明細" v-on:click="openUserPermissionModal({{ $permission['company_id'] }}, {{ $permission['product_id'] }}, '{{ $permission['product_name'] }}', '{{ $permission['start_datetime'] }}', '{{ $permission['end_datetime'] }}', null )" />
                                                                 </div>
                                                             </th>
                                                             <th>{{ $permission['remain_amount'] }}</th>
@@ -84,7 +84,7 @@
                                     </div>
 
                                     <div class="modal fade" id="modal-default">
-                                        <div class="modal-dialog">
+                                        <div class="modal-dialog modal-xl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h4 class="modal-title"></h4>
@@ -92,7 +92,11 @@
                                                     <span aria-hidden="true">×</span></button>
                                                 </div>
                                                 <div class="modal-body">
-
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <user-permission :user-permission-url="userPermissionUrl"></user-permission>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">關閉</button>
@@ -113,48 +117,13 @@
             </div>
 		</div>
 		<script src="{{mix('js/app.js')}}"></script>
+        <script src="{{mix('js/userPermission.js')}}"></script>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
+        <link rel="stylesheet" href="{{asset('css/dataTables.bootstrap4.min.css')}}">
+        {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script> --}}
         {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
     </body>
-    <script>
-        function openUserPermissionModal(company_id, product_id, product_name, start_datetime, end_datetime){
-            console.log(company_id);
-            $('#modalCompanyId').val(company_id);
-            $('#modalProductId').val(product_id);
-            $('#modalStartDatetime').val(start_datetime);
-            $('#modalEndDatetime').val(end_datetime);
-
-            $('.modal-title').text(
-                product_name  + '：' + '使用時段' + start_datetime + '-' + end_datetime
-            );
-
-            $('.modal-body').text(
-
-            );
-
-            $('#modal-default').modal('show');
-        }
-
-        function getUserPermission(company_id, product_id, start_datetime, end_datetime){
-            axios.get("/getUserPermission?company_id="+company_id +"&product_id=" + product_id + "&start_datetime=" + start_datetime +   "&end_datetime=" + end_datetime + "&page=" + page).then((response) => {
-				this.data = response.data
-                let table = '';
-
-                // foreach(this.data as){
-
-                // }
-
-                console.log(this.data);
-			}).catch((error) => {
-				if (error.response) {
-					console.log(error.response.data)
-					console.log(error.response.status)
-					console.log(error.response.headers)
-				} else {
-					console.log("Error", error.message)
-				}
-			})
-        }
-    </script>
 </html>

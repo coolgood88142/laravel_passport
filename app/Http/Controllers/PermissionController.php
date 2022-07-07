@@ -11,6 +11,7 @@ use App\Models\UserPermission;
 use App\Models\UserPermissionLog;
 use App\Presenters\UserPermissionPresenter;
 use Carbon\Carbon;
+use JamesDordoy\LaravelVueDatatable\Http\Resources\DataTableCollectionResource;
 
 class PermissionController extends Controller
 {
@@ -194,12 +195,6 @@ class PermissionController extends Controller
             $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
         }
 
-        // return view('mainPermission', [
-        //     'product' => $this->product,
-        //     'permission' => $permission,
-        //     'showText' => $showText
-        // ]);
-
         foreach(Product::all() as $data){
             $this->product[$data->id]['id'] = $data->id;
             $this->product[$data->id]['name'] = $data->name;
@@ -290,34 +285,151 @@ class PermissionController extends Controller
     }
 
     public function getUserPermission(Request $request){
-        $companyId = $request->company_id == null ? '' : $request->company_id;
-        $productId = $request->product_id == null ? '' : $request->product_id;
-        $startDatetime = $request->start_datetime == null ? '' : $request->start_datetime;
-        $endDatetime = $request->end_datetime == null ? '' : $request->end_datetime;
-        $userName = $request->user_name == null ? '' : $request->user_name;
-        $UserPermissionDetails = [];
+        $length = $request->input('length');
+        $sortBy = $request->input('column');
+        $orderBy = $request->input('dir');
+        $searchValue = $request->input('search');
+        $pageValue = $request->input('page');
 
-        $userPermission = UserPermission::where('company_id', $companyId)
-                            ->where('product_id', $productId)
+        $dataArray = [];
+        $meta = [
+            'from' => 1,
+            'to' => 10,
+            'total' => 10,
+        ];
+        $links = [
+            'prev' => false,
+            'next' => false,
+        ];
+
+        if($pageValue == 1){
+            $meta['from'] = $pageValue;
+            $meta['to'] = $length;
+        }else{
+            $meta['from'] = ($pageValue-1) * $length + 1;
+            $meta['to'] = ($pageValue+1) * $length;
+            $links['prev'] = true;
+            $links['next'] = true;
+        }
+
+        $companyId = $request->companyId == null ? '' : $request->companyId;
+        $productId = $request->productId == null ? '' : $request->productId;
+        $startDatetime = $request->startDatetime == null ? '' : $request->startDatetime;
+        $endDatetime = $request->endDatetime == null ? '' : $request->endDatetime;
+
+
+        // $userName = $request->user_name == null ? '' : $request->user_name;
+        $userData = User::where('company_id', '=', $companyId)->get();
+
+        $userArray = [];
+        foreach($userData as $user){
+            array_push($userArray, $user->id);
+        }
+
+        $userPermission = UserPermission::where('product_id', $productId)
                             ->where('start_datetime', $startDatetime)
                             ->where('end_datetime', $endDatetime)
+                            ->whereIn('user_id', $userArray)
                             ->get();
 
+        $dataArray = [];
         if($userPermission != null){
             foreach($userPermission as $permission){
-                $user = User::where('name', 'like', '%' . $userName. '%')->get();
+                $array = [];
+                $userName = User::where('id', $permission->user_id)->first()->name;
+                $array['id'] = $permission->user_id;
+                $array['name'] = $userName;
+                $array['createDate'] = $permission->created_at->toDateTimeString();
 
-                foreach($user as $data){
-                    array_push($userPermissionDetails, [
-                        'id' => $data->id,
-                        'name' => $data->name,
-                        'permissiomDate' => $userPermission->createed_at,
-                    ]);
-                }
-
+                array_push($dataArray, (object)$array);
             }
         }
 
-        return $data;
+        $collection = collect($dataArray);
+
+        if($searchValue != ''){
+            $searchArray = [];
+            foreach($dataArray as $data){
+                if($data->id == $searchValue || $data->name == $searchValue || $data->createDate == $searchValue){
+                    array_push($searchArray, $data);
+                }
+            }
+
+            if(count($searchArray) > 0){
+                $collection = collect($searchArray);
+            }else{
+                return [
+                    'data' => [],
+                    'meta' => [
+                        'from' => 0,
+                        'to' => 0,
+                        'total' => 0,
+                    ],
+                    'links' => [
+                        'prev' => false,
+                        'next' => false,
+                    ]
+                ];
+            }
+        }
+
+        $meta['total'] = $collection->count();
+        if($pageValue == 1 && $meta['total'] > $length){
+            $links['next'] = true;
+        }
+
+        if($sortBy != '' && $orderBy != ''){
+            if($orderBy == 'asc'){
+                $collection = $collection->sortBy($sortBy);
+            }else if($orderBy == 'desc'){
+                $collection = $collection->sortByDesc($sortBy);
+            }
+        }
+
+        if($length != ''){
+            $collection = $collection->forPage($pageValue, $length);
+        }
+
+        if($meta['to'] > $meta['total'] ){
+            $meta['to'] = ($meta['from'] + $collection->count()) - 1;
+            $links['next'] = false;
+        }
+
+        return [
+                'data' => $collection->values()->all(),
+                'meta' => $meta,
+                'links' => $links
+            ];
+    }
+
+    public function getUserPermissionDeatils(Request $request){
+        $queryUserId = $request->queryUserId == null ? '' : $request->queryUserId;
+        $userPermissionData = [];
+
+        if($queryUserId != ''){
+            $userData = User::where('id', '=', $queryUserId)->first();
+            $userPermission = UserPermission::where('user_id', $userData->id)->get();
+        }else{
+            $userPermission = UserPermission::all();
+        }
+
+        foreach($userPermission as $permission){
+            $user = User::where('id', '=', $permission->user_id)->first();
+            $data = [
+                'user_id' => $permission->user_id,
+                'user_name' => $user->name,
+                'product_name' => $this->product[$permission->product_id]['name'],
+                'start_datetime' => $permission->start_datetime,
+                'end_datetime' => $permission->end_datetime,
+                'created_at' => $permission->created_at,
+            ];
+
+            array_push($userPermissionData, $data);
+        }
+
+        return view('userPermission', [
+            'queryUserId' => $queryUserId,
+            'userPermission' => $userPermissionData,
+        ]);
     }
 }

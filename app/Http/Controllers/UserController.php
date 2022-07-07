@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
      *     tags={"UserInfo"},
      *     produces={"application/json"},
      *     security={
-     *          {"Bearer":{}}
+     *          {"userInfo Bearer":{}}
      *     },
      *     @SWG\Response(
      *          response=200,

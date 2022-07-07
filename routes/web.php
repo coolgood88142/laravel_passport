@@ -82,6 +82,19 @@ Route::post('/getBearerToken', 'AuthController@getBearerToken')->name('getBearer
 
 Route::get('/queryPermissionAmount', 'PermissionAmountController@queryPermissionAmountData')->name('queryPermissionAmount');
 
-Route::get('/getUserPermission', 'PermissionController@getUserPermission')->name('getUserPermission');
+Route::get('/getUserPermission/{companyId}/{productId}/{startDatetime}/{endDatetime}', 'PermissionController@getUserPermission')->name('getUserPermission');
+
+Route::get('/getUserPermissionDeatils', 'PermissionController@getUserPermissionDeatils')->name('getUserPermissionDeatils');
 
 Route::get('editCompany', 'CompanyController@editCompany')->name('editCompany');
+
+Route::get('queryCompany', 'CompanyController@queryCompany')->name('queryCompany');
+
+Route::get('sendCompanyData', 'CompanyController@sendCompanyData')->name('sendCompanyData');
+
+Route::get('/getAuthorizationPage', 'AuthorizationController@getAuthorizationPage')->name('authorizationPage');
+
+Route::get('/agreeAuthorization', 'AuthorizationController@agreeAuthorization')->name('agreeAuthorization');
+
+Route::get('/sendEmail', 'OrderController@ship')->name('sendEmail');
+
