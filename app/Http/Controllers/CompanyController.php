@@ -8,7 +8,9 @@ use App\Models\CompanyPermission;
 use App\Models\Product;
 use App\User;
 use App\Models\UserPermission;
-
+use App\Http\Controllers\GoogleSheetsController;
+use App\Http\Controllers\OrderController;
+use DB;
 class CompanyController extends Controller
 {
     protected $product;
@@ -101,18 +103,27 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function sendCompanyData(Request $request){
-        $queryCompany = $request->queryCompany == null ? '' : $request->queryCompany;
+    public function createCompanyData($queryCompany){
         $companyPermission = [];
         $userPermission = [];
         $productData = [];
+        $userPermissionLog = [];
+        $userPermissionLogGroup = [];
 
         if($queryCompany != ''){
-            $companyPermission = CompanyPermission::where('company_id', $queryCompany)->get();
+            $companyPermissionData = DB::table('company_permission')
+                ->join('company', 'company_permission.company_id' , '=' , 'company.id')
+                ->join('product', 'company_permission.product_id' , '=' , 'product.id')
+                ->select('company_permission.company_id', 'company.name as company_name',
+                    'company_permission.product_id', 'product.name as product_name',
+                    'company_permission.amount', 'company_permission.start_datetime',
+                    'company_permission.end_datetime', 'company_permission.created_at',
+                    'company_permission.updated_at'
+                )
+                ->where('company_id', $queryCompany)->get();
 
-            foreach($companyPermission as $data){
-                $company = Company::where('id', $data->company_id)->first();
-                $product = Product::where('id', $data->product_id)->first();
+            // dd($companyPermissionData[0]->company_id);
+            foreach($companyPermissionData as $data){
                 $userData = User::select('id')->where('company_id', $data->company_id)->get();
                 $startDatetime = $data->start_datetime;
                 $endDatetime = $data->end_datetime;
@@ -121,7 +132,15 @@ class CompanyController extends Controller
                     array_push($userArray, $user->id);
                 }
 
-                $permission = UserPermission::where('product_id', $data->product_id)
+                $permission = DB::table('user_permission')
+                    ->join('users', 'user_permission.user_id' , '=' , 'users.id')
+                    ->join('product', 'user_permission.product_id' , '=' , 'product.id')
+                    ->select('user_permission.user_id', 'users.name as user_name',
+                        'user_permission.product_id', 'product.name as product_name',
+                        'user_permission.start_datetime', 'user_permission.end_datetime',
+                        'user_permission.created_at', 'user_permission.updated_at'
+                    )
+                    ->where('product_id', $data->product_id)
                     ->where('start_datetime', $startDatetime)
                     ->where('end_datetime', $endDatetime)
                     ->whereIn('user_id', $userArray)
@@ -129,20 +148,75 @@ class CompanyController extends Controller
 
                 if($permission->count() > 0){
                     foreach($permission as $data){
-                        array_push($userPermission, $data);
+                        $permissionDataArray = [
+                            'user_id' => $data->user_id,
+                            'user_name' => $data->user_name,
+                            'product_id' => $data->product_id,
+                            'product_name' => $data->product_name,
+                            'start_datetime' => $data->start_datetime,
+                            'end_datetime' => $data->end_datetime,
+                            'created_at' => $data->created_at,
+                            'updated_at' => $data->updated_at,
+                        ];
+                        array_push($userPermission, $permissionDataArray);
+                    }
+                }
+
+                $permissionLog = DB::table('user_permission_log')
+                    ->join('users', 'user_permission_log.user_id' , '=' , 'users.id')
+                    ->join('product', 'user_permission_log.product_id' , '=' , 'product.id')
+                    ->select('user_permission_log.user_id', 'users.name as user_name',
+                        'user_permission_log.product_id', 'product.name as product_name',
+                        'user_permission_log.start_datetime', 'user_permission_log.end_datetime',
+                        'user_permission_log.created_at', 'user_permission_log.updated_at'
+                    )
+                    ->where('product_id', $data->product_id)
+                    ->where('start_datetime', $startDatetime)
+                    ->where('end_datetime', $endDatetime)
+                    ->whereIn('user_id', $userArray)
+                    ->orderBy('created_at')
+                    ->get();
+
+                if($permissionLog->count() > 0){
+                    foreach($permissionLog as $data){
+                        $permissionLogDataArray = [
+                            'user_id' => $data->user_id,
+                            'user_name' => $data->user_name,
+                            'product_id' => $data->product_id,
+                            'product_name' => $data->product_name,
+                            'start_datetime' => $data->start_datetime,
+                            'end_datetime' => $data->end_datetime,
+                            'created_at' => $data->created_at,
+                            'updated_at' => $data->updated_at,
+                        ];
+                        array_push($userPermissionLog, $permissionLogDataArray);
+
+                        // $userPermissionLogGroupArray = [
+                        //     $data->created_at,
+                        // ];
+                        array_push($userPermissionLogGroup, $data->created_at);
                     }
                 }
             }
-
-            foreach(Product::all() as $data){
-                array_push($productData, $data);
-            }
         }
 
-        return view('emails.company', [
-            'companyPermission' => $companyPermission,
-            'productData' => $productData,
+        $userPermissionLogGroupArray = array_unique($userPermissionLogGroup);
+
+        return [
+            'companyPermission' => $companyPermissionData,
             'userPermission' => $userPermission,
-        ]);
+            'userPermissionLog' => $userPermissionLog,
+            'userPermissionLogGroup' => $userPermissionLogGroupArray
+        ];
+    }
+
+    public function sendCompanyData(Request $request){
+        if($request->sendEmail == 'Y'){
+            (new OrderController())->sendEmailCompanyData($request);
+        }else if($request->sendSpreadsheets == 'Y'){
+            (new GoogleSheetsController())->sendSpreadsheetsCompanyData($request);
+        }else if($request->get('sendAppScript') == 'Y'){
+            return $this->createCompanyData($request->get('queryCompany'));
+        }
     }
 }

@@ -7,6 +7,8 @@ use App\Mail\OrderShipped;
 use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\CompanyController;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -16,20 +18,25 @@ class OrderController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function ship(Request $request)
+    public function sendEmailCompanyData(Request $request)
     {
-        // dd($request);
-        // $companyPermission = $request->companyPermission;
+        $queryCompany = $request->queryCompany == null ? '' : $request->queryCompany;
+        $companyController = new CompanyController();
+        $companyPermissionData = $companyController->createCompanyData($queryCompany);
 
-        // $productData = $request->productData;
-        // $userPermission = $request->userPermission;
-        // $order = Order::findOrFail($orderId);
+        $email = $request->queryEmail == null ? '' : $request->queryEmail;
         $to = [
-            'email' => 'coolgood88142@gmail.com'
+            'email' => $email
         ];
 
-        // Ship order...
+        Mail::to($to)->send(new OrderShipped($companyPermissionData));
+        Log::info($companyPermissionData);
 
-        Mail::to($to)->send(new OrderShipped());
+        if(count(Mail::failures())){
+            printf('發送失敗，請重新輸入');
+        }else{
+            printf('發送成功' . '<br/>');
+            printf("Email: %s\n", $email);
+        }
     }
 }

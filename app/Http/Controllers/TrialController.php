@@ -159,7 +159,7 @@ class TrialController extends Controller
                 $trial->source = substr($sourceData, 0, -1);
             }
 
-            $trial->other_text = $request->otherText;
+            $trial->other_text = $request->otherText == null ? '' : $request->otherText;
 
             $trial->save();
             return redirect('queryTrial');

@@ -98,3 +98,8 @@ Route::get('/agreeAuthorization', 'AuthorizationController@agreeAuthorization')-
 
 Route::get('/sendEmail', 'OrderController@ship')->name('sendEmail');
 
+Route::get('/googlesheet', 'GoogleSheetsController@sheetOperation')->name('googlesheet');
+
+Route::get('/createGoogleSheet', 'GoogleSheetsController@createSpreadsheets')->name('createGoogleSheet');
+
+Route::get('/createCompanyData', 'GoogleSheetsController@createCompanyData')->name('createCompanyData');
