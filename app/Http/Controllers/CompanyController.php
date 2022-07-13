@@ -9,7 +9,7 @@ use App\Models\Product;
 use App\User;
 use App\Models\UserPermission;
 use App\Http\Controllers\GoogleSheetsController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\MailController;
 use DB;
 class CompanyController extends Controller
 {
@@ -212,11 +212,13 @@ class CompanyController extends Controller
 
     public function sendCompanyData(Request $request){
         if($request->sendEmail == 'Y'){
-            (new OrderController())->sendEmailCompanyData($request);
+            (new MailController())->sendEmailCompanyData($request);
         }else if($request->sendSpreadsheets == 'Y'){
             (new GoogleSheetsController())->sendSpreadsheetsCompanyData($request);
         }else if($request->get('sendAppScript') == 'Y'){
             return $this->createCompanyData($request->get('queryCompany'));
+        }else if($request->sendEmailWithAttach == 'Y'){
+            (new MailController())->sendEmailWithAttach($request);
         }
     }
 }

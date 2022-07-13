@@ -42,6 +42,7 @@
                                                     <button type="submit" class="btn btn-primary" id="sendEmail" name="sendEmail" value="Y">發送信件</button>
                                                     <button type="submit" class="btn btn-primary" id="sendSpreadsheets" name="sendSpreadsheets" value="Y">發送google試算表</button>
                                                     <button type="button" class="btn btn-primary" id="sendAppScript" name="sendAppScript" value="Y" onclick="sendGoogleAppScript()">發送googleScript</button>
+                                                    <button type="submit" class="btn btn-primary" id="sendEmailWithAttach" name="sendEmailWithAttach" value="Y">發送信件夾帶Excel檔</button>
                                                 </div>
                                             </div>
                                         </div>

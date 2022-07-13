@@ -96,10 +96,12 @@ Route::get('/getAuthorizationPage', 'AuthorizationController@getAuthorizationPag
 
 Route::get('/agreeAuthorization', 'AuthorizationController@agreeAuthorization')->name('agreeAuthorization');
 
-Route::get('/sendEmail', 'OrderController@ship')->name('sendEmail');
+Route::get('/sendEmail', 'MailController@ship')->name('sendEmail');
 
 Route::get('/googlesheet', 'GoogleSheetsController@sheetOperation')->name('googlesheet');
 
 Route::get('/createGoogleSheet', 'GoogleSheetsController@createSpreadsheets')->name('createGoogleSheet');
 
 Route::get('/createCompanyData', 'GoogleSheetsController@createCompanyData')->name('createCompanyData');
+
+Route::get('/exportExcel', 'MailController@sendEmailWithAttach');
