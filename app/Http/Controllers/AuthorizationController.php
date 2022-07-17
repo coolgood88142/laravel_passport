@@ -126,7 +126,7 @@ class AuthorizationController
     {
         return $this->withErrorHandling(function () use ($psrRequest, $request, $clients, $tokens) {
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
-            $request->headers->set('Access-Control-Allow-Origin', '*');
+            // $request->headers->set('Access-Control-Allow-Origin', '*');
 
             $scopes = $this->parseScopes($authRequest);
 

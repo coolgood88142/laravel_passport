@@ -432,4 +432,18 @@ class PermissionController extends Controller
             'userPermission' => $userPermissionData,
         ]);
     }
+
+    public function editCompanyPermission(Request $request){
+
+        $editCompanyPermissionId = $request->editCompanyPermissionId  == null ? '' : $request->editCompanyPermissionId;
+        $companyPermission = CompanyPermission::where('id', '=', $editCompanyPermissionId)->first();
+
+        return [
+            'companyId' => $companyPermission->company_id,
+            'productId' => $companyPermission->product_id,
+            'amount' => $companyPermission->amount,
+            'startDateTime' => $companyPermission->start_datetime,
+            'endDateTime' => $companyPermission->end_datetime,
+        ];
+    }
 }

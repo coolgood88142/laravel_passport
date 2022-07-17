@@ -23,8 +23,8 @@ class GoogleSheetsController extends Controller
             '產品ID',
             '產品名稱',
             '數量',
-            '使用時段-起始時間',
-            '使用時段-截止時間',
+            '使用時段',
+            '學員ID',
             '建立時間',
             '更新時間',
         ];
@@ -34,8 +34,7 @@ class GoogleSheetsController extends Controller
             '學員姓名',
             '產品ID',
             '產品名稱',
-            '使用時段-起始時間',
-            '使用時段-截止時間',
+            '使用時段',
             '建立時間',
             '更新時間',
         ];
@@ -45,8 +44,7 @@ class GoogleSheetsController extends Controller
             '學員姓名',
             '產品ID',
             '產品名稱',
-            '使用時段-起始時間',
-            '使用時段-截止時間',
+            '使用時段',
             '建立時間',
             '更新時間',
         ];
@@ -56,15 +54,15 @@ class GoogleSheetsController extends Controller
 
         foreach($companyPermissionData['companyPermission'] as $company){
             $array = [
-                $company->company_id,
-                $company->company_name,
-                $company->product_id,
-                $company->product_name,
-                $company->amount,
-                $company->start_datetime,
-                $company->end_datetime,
-                $company->created_at,
-                $company->updated_at,
+                $company['company_id'],
+                $company['company_name'],
+                $company['product_id'],
+                $company['product_name'],
+                $company['amount'],
+                $company['date_time'],
+                $company['users_id'],
+                $company['created_at'],
+                $company['updated_at'],
             ];
             array_push($values, $array);
         }
@@ -79,8 +77,7 @@ class GoogleSheetsController extends Controller
                 $user['user_name'],
                 $user['product_id'],
                 $user['product_name'],
-                $user['start_datetime'],
-                $user['end_datetime'],
+                $user['date_time'],
                 $user['created_at'],
                 $user['updated_at'],
             ];
@@ -97,8 +94,7 @@ class GoogleSheetsController extends Controller
                 $user['user_name'],
                 $user['product_id'],
                 $user['product_name'],
-                $user['start_datetime'],
-                $user['end_datetime'],
+                $user['date_time'],
                 $user['created_at'],
                 $user['updated_at'],
             ];

@@ -105,3 +105,5 @@ Route::get('/createGoogleSheet', 'GoogleSheetsController@createSpreadsheets')->n
 Route::get('/createCompanyData', 'GoogleSheetsController@createCompanyData')->name('createCompanyData');
 
 Route::get('/exportExcel', 'MailController@sendEmailWithAttach');
+
+Route::post('/editCompanyPermission', 'PermissionController@editCompanyPermission')->name('editCompanyPermission');

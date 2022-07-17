@@ -54,33 +54,50 @@ class MailController extends Controller
 
         $companyPermission = [];
         array_push($companyPermission, ['公司權益']);
-        array_push($companyPermission, ['公司ID', '公司名稱', '產品ID', '產品名稱', '數量', '使用時段-起始時間', '使用時段-截止時間', '建立時間', '更新時間']);
+        array_push($companyPermission, ['公司ID', '公司名稱', '產品ID', '產品名稱', '數量', '使用時段', '學員ID', '建立時間', '更新時間']);
         foreach($companyPermissionData['companyPermission'] as $company){
             $array = [
-                $company->company_id,
-                $company->company_name,
-                $company->product_id,
-                $company->product_name,
-                $company->amount,
-                $company->start_datetime,
-                $company->end_datetime,
-                $company->created_at,
-                $company->updated_at,
+                $company['company_id'],
+                $company['company_name'],
+                $company['product_id'],
+                $company['product_name'],
+                $company['amount'],
+                $company['date_time'],
+                $company['users_id'],
+                $company['created_at'],
+                $company['updated_at'],
             ];
             array_push($companyPermission, $array);
         }
 
+        $companyPermissionLog = [];
+        array_push($companyPermissionLog, ['公司權益']);
+        array_push($companyPermissionLog, ['公司ID', '公司名稱', '產品ID', '產品名稱', '數量', '使用時段', '學員ID', '建立時間', '更新時間']);
+        foreach($companyPermissionData['companyPermissionLog'] as $companyLog){
+            $array = [
+                $companyLog['company_id'],
+                $companyLog['company_name'],
+                $companyLog['product_id'],
+                $companyLog['product_name'],
+                $companyLog['amount'],
+                $companyLog['date_time'],
+                $companyLog['users_id'],
+                $companyLog['created_at'],
+                $companyLog['updated_at'],
+            ];
+            array_push($companyPermissionLog, $array);
+        }
+
         $userPermission = [];
         array_push($userPermission, ['學員權益']);
-        array_push($userPermission, ['學員ID', '學員姓名', '產品ID', '產品名稱', '使用時段-起始時間', '使用時段-截止時間', '建立時間', '更新時間']);
+        array_push($userPermission, ['學員ID', '學員姓名', '產品ID', '產品名稱', '使用時段', '建立時間', '更新時間']);
         foreach($companyPermissionData['userPermission'] as $user){
             $array = [
                 $user['user_id'],
                 $user['user_name'],
                 $user['product_id'],
                 $user['product_name'],
-                $user['start_datetime'],
-                $user['end_datetime'],
+                $user['date_time'],
                 $user['created_at'],
                 $user['updated_at'],
             ];
@@ -89,15 +106,14 @@ class MailController extends Controller
 
         $userPermissionLog = [];
         array_push($userPermissionLog, ['學員權益變更記錄']);
-        array_push($userPermissionLog, ['學員ID', '學員姓名', '產品ID', '產品名稱', '使用時段-起始時間', '使用時段-截止時間', '建立時間', '更新時間']);
+        array_push($userPermissionLog, ['學員ID', '學員姓名', '產品ID', '產品名稱', '使用時段', '建立時間', '更新時間']);
         foreach($companyPermissionData['userPermissionLog'] as $user){
             $array = [
                 $user['user_id'],
                 $user['user_name'],
                 $user['product_id'],
                 $user['product_name'],
-                $user['start_datetime'],
-                $user['end_datetime'],
+                $user['date_time'],
                 $user['created_at'],
                 $user['updated_at'],
             ];
@@ -107,6 +123,7 @@ class MailController extends Controller
 
         $companyPermissionDataArray = [
             'companyPermission' => $companyPermission,
+            'companyPermissionLog' => $companyPermissionLog,
             'userPermission' => $userPermission,
             'userPermissionLog' => $userPermissionLog
         ];

@@ -82,8 +82,8 @@
                     el.product_id,
                     el.product_name,
                     el.amount,
-                    el.start_datetime,
-                    el.end_datetime,
+                    el.date_time,
+                    el.users_id,
                     el.created_at,
                     el.updated_at
                 ]);
@@ -95,8 +95,7 @@
                     el.user_name,
                     el.product_id,
                     el.product_name,
-                    el.start_datetime,
-                    el.end_datetime,
+                    el.date_time,
                     el.created_at,
                     el.updated_at
                 ]);
@@ -108,8 +107,7 @@
                     el.user_name,
                     el.product_id,
                     el.product_name,
-                    el.start_datetime,
-                    el.end_datetime,
+                    el.date_time,
                     el.created_at,
                     el.updated_at
                 ]);
