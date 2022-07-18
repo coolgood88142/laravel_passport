@@ -28,25 +28,32 @@
 								<div class="box-body">
 									<form method="post" action="{{url('/savePermission')}}">
 										@csrf
-											@foreach ($company_permission_group as $companyPermission)
+											@foreach ($company_permission_group as $key => $companyPermission)
 												<div class="form-group">
 													<label>{{ $product[$companyPermission->product_id]['name'] }}</label>
-													@foreach ($company_permission[$companyPermission->product_id] as $data)
-														<div class="col-offset-2 col-8">
-															<div class="checkbox">
-																<input type="checkbox" class="minimal" name="product[]" value="{{ $data->id }}"
-																			@foreach ($user_permission as $user)
-																				@if ($data->product_id == $user->product_id &&
-																						$data->start_datetime == $user->start_datetime &&
-																						$data->end_datetime == $user->end_datetime)
-																						checked
-																				@endif
-																			@endforeach
-																		>
-																{{ '(' . $data->start_datetime . '-' . $data->end_datetime . ')' }}
-															</div>
-														</div>
-													@endforeach
+													<div class="row">
+                                                        <div class="col-offset-2 col-7">
+                                                            @foreach ($company_permission[$companyPermission->product_id] as $data)
+                                                                <div class="col">
+                                                                    <div class="checkbox">
+                                                                        <input type="checkbox" class="minimal" name="product[]" value="{{ $data->id }}"
+                                                                                    @foreach ($user_permission as $user)
+                                                                                        @if ($data->product_id == $user->product_id &&
+                                                                                                $data->start_datetime == $user->start_datetime &&
+                                                                                                $data->end_datetime == $user->end_datetime)
+                                                                                                checked
+                                                                                        @endif
+                                                                                    @endforeach
+                                                                                >
+                                                                        {{ '(' . $data->start_datetime . '-' . $data->end_datetime . ')' }}
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                        <div class="col-offset-2 col-5">
+                                                            <button type="submit" class="btn btn-primary" id="deleteExpiredProductId" name="deleteExpiredProductId" value="{{ $key }}">{{ '刪除過期的' . $product[$companyPermission->product_id]['name'] . '資料' }}</button>
+                                                        </div>
+                                                    </div>
 												</div>
 											@endforeach
 										<button type="submit" class="btn btn-primary" >送出</button>
