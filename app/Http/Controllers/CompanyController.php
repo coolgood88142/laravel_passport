@@ -9,8 +9,10 @@ use App\Models\CompanyPermissionLog;
 use App\Models\Product;
 use App\User;
 use App\Models\UserPermission;
+use App\Models\UserPermissionLog;
 use App\Http\Controllers\GoogleSheetsController;
 use App\Http\Controllers\MailController;
+use Carbon\Carbon;
 use DB;
 class CompanyController extends Controller
 {
@@ -40,6 +42,9 @@ class CompanyController extends Controller
         $addCompanyPermission = $request->addCompanyPermission == null ? '' : $request->addCompanyPermission;
         $updateCompanyPermission = $request->updateCompanyPermission == null ? '' : $request->updateCompanyPermission;
         $deleteCompanyPermission = $request->deleteCompanyPermission == null ? '' : $request->deleteCompanyPermission;
+        $deleteExpiredData = $request->deleteExpiredData == null ? '' : $request->deleteExpiredData;
+        $now = Carbon::now('Asia/Taipei')->toDateTimeString();
+        $this->productId = $request->productId == null ? '' : $request->productId;
         $errorMsg = '';
 
         if($queryCompany != '' && $queryCompanyPermission == 'Y'){
@@ -205,40 +210,88 @@ class CompanyController extends Controller
             $this->amount = '';
             $request->startDateTime = '';
             $request->endDateTime = '';
-        }
+        }else if($queryCompany != '' && $deleteExpiredData == 'Y' && $this->productId != ''){
+            $companyId = $request->companyId == null ? '' : $request->companyId;
+            $companyPermissionData = CompanyPermission::where('company_id', $companyId)
+                                    ->where('product_id', '=', $this->productId)
+                                    ->where('end_datetime', '<', $now)
+                                    ->get();
 
-        $companyPermission = CompanyPermission::where('company_id', $companyId)
-                    ->where('product_id', $deleteExpiredProductId)->get();
-                // TODO:新增過期where條件
-
-                if($companyPermission->count() > 0){
-                    $now = Carbon::now('Asia/Taipei');
-                    foreach($companyPermission as $value){
-                        $end = Carbon::parse($value->end_datetime);
-
-                        //判斷今天日期比使用時段的-截止日期大，就被當作過期資料搬移
-                        if($now->gt($end)){
-                            // TODO:移除product_id條件
-                            // TODO:學員權益資料單獨做新增log和刪除，要join多個table資料
-                            $permissionData = UserPermission::where('product_id', $value->product_id)
-                            ->where('start_datetime', $value->start_datetime)
-                            ->where('end_datetime', $value->end_datetime)
-                            ->get();
-
-                            //新增學員權益log、刪除學員權益
-                            foreach($permissionData as $permission){
-                                $this->saveUserPermissionLog($permission->user_id, $permission, $permission, '');
-                                // $this->deleteUserPermission($permission->id);
-                            }
-
-                            //新增公司權益log、刪除公司權益
-                            $this->saveCompanyPermissionLog($companyId, $deleteExpiredProductId, $value->amount, $value);
-                            // $this->deleteCompanyPermission($value->id);
-
-                            $showText = '已經刪除過期的' . $this->product[$deleteExpiredProductId]['name'] . '資料!';
-                        }
-                    }
+            if($companyPermissionData->count() > 0){
+                foreach($companyPermissionData as $companyPermission){
+                    $this->deleteCompanyPermission($companyPermission->id);
+                    $this->saveCompanyPermissionLog($companyPermission);
                 }
+
+                $userPermissionData = DB::table('users')
+                    ->join('user_permission', 'users.id' , '=' , 'user_permission.user_id')
+                    ->join('company', 'users.company_id', '=', 'company.id')
+                    ->select('user_permission.id', 'user_permission.user_id',
+                        'user_permission.product_id', 'user_permission.start_datetime',
+                        'user_permission.end_datetime', 'user_permission.created_at',
+                        'user_permission.updated_at'
+                    )
+                    ->where('user_permission.end_datetime', '<', $now)
+                    ->where('company.id', '=', $companyId)
+                    ->get();
+
+                if($userPermissionData->count() > 0){
+                    foreach($userPermissionData as $userPermission){
+                        $this->deleteUserPermission($userPermission->id);
+                        $this->saveUserPermissionLog($userPermission);
+                    }
+
+                }
+            }
+
+            $editCompanyPermissionId = $request->editCompanyPermissionId == null ? '' : $request->editCompanyPermissionId;
+            $this->companyId = $request->companyId == null ? '' : $request->companyId;
+            $this->productId = $request->productId == null ? '' : $request->productId;
+            $this->amount = $request->amount == null ? '' : $request->amount;
+            $startDateTime = $request->startDateTime == null ? '' : $request->startDateTime;
+            $endDateTime = $request->endDateTime == null ? '' : $request->endDateTime;
+
+
+            if($editCompanyPermissionId != ''){
+                $data = CompanyPermission::where('id', '=', $editCompanyPermissionId)->first();
+                $data->company_id = $this->companyId;
+                $data->product_id = $this->productId;
+                $data->amount = $this->amount;
+                $data->start_datetime = $startDateTime;
+                $data->end_datetime = $endDateTime;
+                $data->save();
+            }
+
+            $company = Company::where('id', $this->companyId)->first();
+            $this->queryCompanyName = $company->name;
+            $companyPermission = CompanyPermission::where('company_id', $this->companyId)->get();
+
+            foreach($companyPermission as $data){
+                $company = Company::where('id', $data->company_id)->first();
+                $product = Product::where('id', $data->product_id)->first();
+                $userData = User::select('id')->where('company_id', $data->company_id)->get();
+                $startDatetime = $data->start_datetime;
+                $endDatetime = $data->end_datetime;
+
+                $companyPermission = [
+                    'company_permission_id' => $data->id,
+                    'company_id' =>  $company->id,
+                    'company_name' =>  $company->name,
+                    'product_id' =>  $product->id,
+                    'product_name' =>  $product->name,
+                    'amount' =>  $data->amount,
+                    'start_datetime' =>  $startDatetime,
+                    'end_datetime' =>  $endDatetime,
+                ];
+
+                array_push($this->permissionAmount, $companyPermission);
+            }
+
+            $this->productId = '';
+            $this->amount = '';
+            $request->startDateTime = '';
+            $request->endDateTime = '';
+        }
 
         return view('editCompany', [
             'company' => Company::all(),
@@ -251,6 +304,33 @@ class CompanyController extends Controller
             'startDateTime' => $request->startDateTime,
             'endDateTime' => $request->endDateTime,
         ]);
+    }
+
+    public function deleteCompanyPermission($id){
+        CompanyPermission::where('id', '=', $id)->delete();
+    }
+
+    public function saveCompanyPermissionLog($companyPermission){
+        $companyPermissionLog = new CompanyPermissionLog();
+        $companyPermissionLog->company_id = $companyPermission->company_id;
+        $companyPermissionLog->product_id = $companyPermission->product_id;
+        $companyPermissionLog->amount = $companyPermission->amount;
+        $companyPermissionLog->start_datetime = $companyPermission->start_datetime;
+        $companyPermissionLog->end_datetime = $companyPermission->end_datetime;
+        $companyPermissionLog->save();
+    }
+
+    public function deleteUserPermission($id){
+        UserPermission::where('id', '=', $id)->delete();
+    }
+
+    public function saveUserPermissionLog($userPermission){
+        $userPermissionLog = new UserPermissionLog();
+        $userPermissionLog->user_id = $userPermission->user_id;
+        $userPermissionLog->product_id = $userPermission->product_id;
+        $userPermissionLog->start_datetime = $userPermission->start_datetime;
+        $userPermissionLog->end_datetime = $userPermission->end_datetime;
+        $userPermissionLog->save();
     }
 
     public function queryCompany(Request $request){

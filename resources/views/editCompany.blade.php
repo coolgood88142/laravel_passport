@@ -74,6 +74,7 @@
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <button type="submit" class="btn btn-primary" id="addCompanyPermission" name="addCompanyPermission" value="Y">新增</button>
+                                                        <button type="submit" class="btn btn-primary" id="deleteExpiredData" name="deleteExpiredData" value="Y" style="display:none;">刪除過期產品資料</button>
                                                         <button type="submit" class="btn btn-primary" id="updateCompanyPermission" name="updateCompanyPermission" value="Y" style="display:none;">更新</button>
                                                         <button type="submit" class="btn btn-primary" id="deleteCompanyPermission" name="deleteCompanyPermission" value="Y" style="display:none;">刪除</button>
                                                     </div>
@@ -154,6 +155,14 @@
             }
         });
 
+        $('#productId').on('change', function() {
+            if(this.value != ''){
+                $('#deleteExpiredData').show();
+            }else{
+                $('#deleteExpiredData').hide();
+            }
+        });
+
         function editCompanyPermission(id){
             axios.post('/editCompanyPermission', {editCompanyPermissionId: id})
                 .then(response => {
@@ -166,6 +175,7 @@
                     $('#updateCompanyPermission').show();
                     $('#deleteCompanyPermission').show();
                     $('#addCompanyPermission').hide();
+                    $('#deleteExpiredData').hide();
                 })
                 .catch(error => {
                     if (typeof error.response.data === 'object') {

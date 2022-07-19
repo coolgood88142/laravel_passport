@@ -28,11 +28,11 @@
 								<div class="box-body">
 									<form method="post" action="{{url('/savePermission')}}">
 										@csrf
-											@foreach ($company_permission_group as $key => $companyPermission)
+											@foreach ($company_permission_group as $companyPermission)
 												<div class="form-group">
 													<label>{{ $product[$companyPermission->product_id]['name'] }}</label>
 													<div class="row">
-                                                        <div class="col-offset-2 col-7">
+                                                        <div class="col-offset-2 col-8">
                                                             @foreach ($company_permission[$companyPermission->product_id] as $data)
                                                                 <div class="col">
                                                                     <div class="checkbox">
@@ -49,9 +49,6 @@
                                                                     </div>
                                                                 </div>
                                                             @endforeach
-                                                        </div>
-                                                        <div class="col-offset-2 col-5">
-                                                            <button type="submit" class="btn btn-primary" id="deleteExpiredProductId" name="deleteExpiredProductId" value="{{ $key }}">{{ '刪除過期的' . $product[$companyPermission->product_id]['name'] . '資料' }}</button>
                                                         </div>
                                                     </div>
 												</div>
