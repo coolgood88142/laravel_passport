@@ -207,6 +207,39 @@ class CompanyController extends Controller
             $request->endDateTime = '';
         }
 
+        $companyPermission = CompanyPermission::where('company_id', $companyId)
+                    ->where('product_id', $deleteExpiredProductId)->get();
+                // TODO:新增過期where條件
+
+                if($companyPermission->count() > 0){
+                    $now = Carbon::now('Asia/Taipei');
+                    foreach($companyPermission as $value){
+                        $end = Carbon::parse($value->end_datetime);
+
+                        //判斷今天日期比使用時段的-截止日期大，就被當作過期資料搬移
+                        if($now->gt($end)){
+                            // TODO:移除product_id條件
+                            // TODO:學員權益資料單獨做新增log和刪除，要join多個table資料
+                            $permissionData = UserPermission::where('product_id', $value->product_id)
+                            ->where('start_datetime', $value->start_datetime)
+                            ->where('end_datetime', $value->end_datetime)
+                            ->get();
+
+                            //新增學員權益log、刪除學員權益
+                            foreach($permissionData as $permission){
+                                $this->saveUserPermissionLog($permission->user_id, $permission, $permission, '');
+                                // $this->deleteUserPermission($permission->id);
+                            }
+
+                            //新增公司權益log、刪除公司權益
+                            $this->saveCompanyPermissionLog($companyId, $deleteExpiredProductId, $value->amount, $value);
+                            // $this->deleteCompanyPermission($value->id);
+
+                            $showText = '已經刪除過期的' . $this->product[$deleteExpiredProductId]['name'] . '資料!';
+                        }
+                    }
+                }
+
         return view('editCompany', [
             'company' => Company::all(),
             'product' => Product::all(),

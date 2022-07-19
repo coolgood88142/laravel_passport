@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CompanyPermission;
-use App\Models\CompanyPermissionLog;
 use App\Models\Product;
 use App\User;
 use App\Models\UserPermission;
@@ -13,6 +12,7 @@ use App\Models\UserPermissionLog;
 use App\Presenters\UserPermissionPresenter;
 use Carbon\Carbon;
 use JamesDordoy\LaravelVueDatatable\Http\Resources\DataTableCollectionResource;
+use DB;
 
 class PermissionController extends Controller
 {
@@ -97,70 +97,37 @@ class PermissionController extends Controller
             $count = $permission->count();
 
             $del = [];
-            if($deleteExpiredProductId != ''){
+            foreach($this->product as $index => $data){
                 $companyPermission = CompanyPermission::where('company_id', $companyId)
-                    ->where('product_id', $deleteExpiredProductId)->get();
-
+                    ->where('product_id', $data['id'])->get();
 
                 if($companyPermission->count() > 0){
-                    $now = Carbon::now('Asia/Taipei');
                     foreach($companyPermission as $value){
-                        $end = Carbon::parse($value->end_datetime);
-
-                        //判斷今天日期比使用時段的-截止日期大，就被當作過期資料搬移
-                        if($now->gt($end)){
-                            $permissionData = UserPermission::where('product_id', $value->product_id)
+                        $permissionData = UserPermission::where('user_id', $userId)
+                            ->where('product_id', $value->product_id)
                             ->where('start_datetime', $value->start_datetime)
                             ->where('end_datetime', $value->end_datetime)
-                            ->get();
-
-                            //新增學員權益log、刪除學員權益
-                            foreach($permissionData as $permission){
-                                $this->saveUserPermissionLog($permission->user_id, $permission, $permission, '');
-                                $this->deleteUserPermission($permission->id);
-                            }
-
-                            //新增公司權益log、刪除公司權益
-                            $this->saveCompanyPermissionLog($companyId, $deleteExpiredProductId, $value->amount, $value);
-                            $this->deleteCompanyPermissionLog($value->id);
-                        }
-                    }
-                }
-
-
-            }else{
-                foreach($this->product as $index => $data){
-                    $companyPermission = CompanyPermission::where('company_id', $companyId)
-                        ->where('product_id', $data['id'])->get();
-
-                    if($companyPermission->count() > 0){
-                        foreach($companyPermission as $value){
-                            $permissionData = UserPermission::where('user_id', $userId)
-                                ->where('product_id', $value->product_id)
-                                ->where('start_datetime', $value->start_datetime)
-                                ->where('end_datetime', $value->end_datetime)
-                                ->first();
-                            if($count > 0 || $permissionData == null){
-                                if($permissionData != null && $nowProduct == []){
-                                    $this->deleteUserPermission($permissionData->id);
-                                    $showText = $this->saveUserPermissionLog($userId, $value, $permissionData, $showText);
-                                }else if($permissionData != null && !in_array($value->id, $nowProduct)){
-                                    $this->deleteUserPermission($permissionData->id);
-                                    $showText = $this->saveUserPermissionLog($userId, $value, $permissionData, $showText);
-                                }else if($permissionData == null && in_array($value->id, $nowProduct)){
-                                    $showText = $this->saveUserPermission($userId, $value, $showText);
-                                }
-                            }else if(in_array($value->id, $nowProduct)){
+                            ->first();
+                        if($count > 0 || $permissionData == null){
+                            if($permissionData != null && $nowProduct == []){
+                                $this->deleteUserPermission($permissionData->id);
+                                $showText = $this->saveUserPermissionLog($userId, $value, $permissionData, $showText);
+                            }else if($permissionData != null && !in_array($value->id, $nowProduct)){
+                                $this->deleteUserPermission($permissionData->id);
+                                $showText = $this->saveUserPermissionLog($userId, $value, $permissionData, $showText);
+                            }else if($permissionData == null && in_array($value->id, $nowProduct)){
                                 $showText = $this->saveUserPermission($userId, $value, $showText);
                             }
+                        }else if(in_array($value->id, $nowProduct)){
+                            $showText = $this->saveUserPermission($userId, $value, $showText);
                         }
                     }
                 }
+            }
 
-                if($showText != ''){
-                    $showText = substr($showText, 0, -1);
-                    $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
-                }
+            if($showText != ''){
+                $showText = substr($showText, 0, -1);
+                $permission = UserPermission::where('user_id', $userId)->orderBy('product_id', 'asc')->get();
             }
         }else if(!Auth::check() && $nowProduct == null){
             $showText = '請選擇權益!';
@@ -233,29 +200,12 @@ class PermissionController extends Controller
         $UserPermission->start_datetime = $permissionData->start_datetime;
         $UserPermission->end_datetime = $permissionData->end_datetime;
         $UserPermission->save();
-
-        if($showText != ''){
-            $showText = $showText . '移除' . $this->product[$value->product_id]['name'] . '(' . $permissionData->start_datetime . '-' . $permissionData->end_datetime . ')' . ',';
-            return $showText;
-        }
+        $showText = $showText . '移除' . $this->product[$value->product_id]['name'] . '(' . $permissionData->start_datetime . '-' . $permissionData->end_datetime . ')' . ',';
+        return $showText;
     }
 
     public function deleteUserPermission($id){
         UserPermission::where('id', $id)->delete();
-    }
-
-    public function saveCompanyPermissionLog($companyId, $productId, $amount, $permissionData){
-        $CompanyPermission = new CompanyPermissionLog();
-        $CompanyPermission->company_id = $companyId;
-        $CompanyPermission->product_id = $productId;
-        $CompanyPermission->amount = $amount;
-        $CompanyPermission->start_datetime = $permissionData->start_datetime;
-        $CompanyPermission->end_datetime = $permissionData->end_datetime;
-        $CompanyPermission->save();
-    }
-
-    public function deleteCompanyPermission($id){
-        CompanyPermission::where('id', $id)->delete();
     }
 
     public function showUserPermissionBlade(){
