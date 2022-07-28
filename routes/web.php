@@ -56,6 +56,8 @@ Route::group(['middleware' => ['web', 'oauth', 'swfix']], function ($router) {
     ]);
 });
 
+// Route::middleware('swfix')->get('api/user', 'UserController@getData');
+
 // Route::get('/authorizationCode', 'AuthorizationController@authorizationCode')->name('authorizationCode');
 
 // Route::post('/authorizationCode', 'ApproveAuthorizationController@approve')->name('approve');

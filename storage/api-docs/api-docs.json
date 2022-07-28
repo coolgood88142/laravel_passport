@@ -1,68 +1,14 @@
 {
-    "swagger": "2.0",
+    "openapi": "3.0.0",
     "info": {
-        "title": "Laravel Passport Authorization Code API",
-        "description": "Authorization Code API description",
-        "contact": {
-            "email": "coolgood88142@gmail.com"
-        },
+        "title": "Swagger-Demo",
         "version": "1.0.0"
     },
     "paths": {
-        "/getBearerToken": {
-            "post": {
-                "tags": [
-                    "getBearerToken"
-                ],
-                "summary": "getBearerToken",
-                "operationId": "getBearerToken",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                }
-            }
-        },
         "/authorizationCode": {
             "get": {
                 "tags": [
                     "AuthorizationCode"
-                ],
-                "summary": "取得authorizationCode",
-                "produces": [
-                    "text/html,application/xhtml+xml,application/xml;"
                 ],
                 "parameters": [
                     {
@@ -70,34 +16,44 @@
                         "in": "query",
                         "description": "client端ID",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "name": "redirect_uri",
                         "in": "query",
                         "description": "導頁的Uri",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "name": "response_type",
                         "in": "query",
                         "description": "授權類型",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "name": "scope",
                         "in": "query",
                         "description": "存取資料範圍",
-                        "type": "string"
+                        "schema": {
+                            "type": "string"
+                        }
                     },
                     {
                         "name": "state",
                         "in": "query",
                         "description": "授權編碼",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -116,12 +72,7 @@
                     "403": {
                         "description": "Forbidden"
                     }
-                },
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ]
+                }
             }
         },
         "/oauth/token": {
@@ -129,57 +80,44 @@
                 "tags": [
                     "AccessToken"
                 ],
-                "summary": "取得Access Token",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "grant_type",
-                        "in": "formData",
-                        "description": "grantType",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "redirect_uri",
-                        "in": "formData",
-                        "description": "redirectUri",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "code",
-                        "in": "formData",
-                        "description": "code",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "client_id",
-                        "in": "formData",
-                        "description": "client_id",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "client_secret",
-                        "in": "formData",
-                        "description": "clientSecret",
-                        "required": true,
-                        "type": "string"
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "grant_type": {
+                                        "type": "string"
+                                    },
+                                    "redirect_uri": {
+                                        "type": "string"
+                                    },
+                                    "code": {
+                                        "type": "string"
+                                    },
+                                    "client_id": {
+                                        "type": "Integer"
+                                    },
+                                    "client_secret": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "grant_type": "authorization_code",
+                                    "redirect_uri": "http://127.0.0.1:8080/getAuthorizationCode",
+                                    "code": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                                    "client_id": 18,
+                                    "client_secret": "har2ePG2kSTW2BPNaqVWdiyhg5U3SarVxNpLxZgD"
+                                }
+                            }
+                        }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Successful operation"
                     }
-                },
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ]
+                }
             }
         },
         "/api/user": {
@@ -187,10 +125,7 @@
                 "tags": [
                     "UserInfo"
                 ],
-                "summary": "取得使用者資訊",
-                "produces": [
-                    "application/json"
-                ],
+                "operationId": "d17412c0c93a5ac770f7fd126f2e9421",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -210,32 +145,46 @@
                 },
                 "security": [
                     {
-                        "userInfo Bearer": []
+                        "passport": []
                     }
                 ]
             }
         }
     },
-    "definitions": {},
-    "securityDefinitions": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        },
-        "userInfo Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        },
-        "passport": {
-            "type": "oauth2",
-            "description": "Laravel passport oauth2 security.",
-            "in": "header",
-            "flow": "authorizationCode",
-            "authorizationUrl": "http://127.0.0.1:8080/authorize",
-            "tokenUrl": "http://127.0.0.1:8000/oauth/token",
-            "scopes": []
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "JWT Authorization header using the Bearer scheme.",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            },
+            "passport": {
+                "type": "oauth2",
+                "description": "Laravel passport oauth2 security.",
+                "in": "header",
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "http://127.0.0.1:8080/authorize",
+                        "tokenUrl": "http://127.0.0.1:8000/oauth/token",
+                        "scopes": {}
+                    }
+                }
+            }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "AuthorizationCode",
+            "description": "取得authorizationCode"
+        },
+        {
+            "name": "AccessToken",
+            "description": "取得Access Token"
+        },
+        {
+            "name": "UserInfo",
+            "description": "取得UserInfo"
+        }
+    ]
 }

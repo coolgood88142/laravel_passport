@@ -46,7 +46,7 @@ use App\Http\Controllers\Auth;
 //     return $request->user()->toArray();
 // })->middleware('auth:api');
 
-Route::middleware('auth:api', 'swfix')->get('/user', 'UserController@getData');
+Route::middleware('auth:api')->get('/user', 'UserController@getData');
 
 Route::middleware('auth:api', 'swfix')->get('/authorizationCode', 'AuthorizationController@authorizationCode');
 

@@ -44,7 +44,7 @@ return [
         |--------------------------------------------------------------------------
          */
         'middleware' => [
-            'api' => ['web' , 'auth'],
+            'api' => ['web', 'auth', 'swagger'],
             'asset' => [],
             'docs' => [],
             'oauth2_callback' => [],
@@ -167,15 +167,22 @@ return [
         //     ],
         // ],
 
-        'passport' => [ // Unique name of security
-            'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
-            'description' => 'Laravel passport oauth2 security.',
-            'in' => 'header',
-            'flow' => 'authorizationCode',
-            'authorizationUrl' => 'http://127.0.0.1:8080/authorize',
-            "tokenUrl" => 'http://127.0.0.1:8000/oauth/token',
-            "scopes" => []
-        ],
+        // 'passport' => [ // Unique name of security
+        //     'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+        //     'description' => 'Laravel passport oauth2 security.',
+        //     'in' => 'header',
+        //     'flow' => 'authorizationCode',
+        //     'authorizationUrl' => 'http://127.0.0.1:8080/authorize',
+        //     "tokenUrl" => 'http://127.0.0.1:8000/oauth/token',
+        //     "scopes" => []
+        // ],
+
+        // 'bearer_token' => [ // Unique name of security
+        //     'type' => 'apiKey', // Valid values are "basic", "apiKey" or "oauth2".
+        //     'description' => 'Enter token in format (Bearer <token>)',
+        //     'name' => 'Authorization', // The name of the header or query parameter to be used.
+        //     'in' => 'header', // The location of the API key. Valid values are "query" or "header".
+        //  ],
 
         // 'passport' => [
         //     'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
@@ -208,7 +215,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'swagger_version' => env('SWAGGER_VERSION', '2.0'),
+    'swagger_version' => env('SWAGGER_VERSION', '3.0'),
 
     /*
     |--------------------------------------------------------------------------

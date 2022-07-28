@@ -8,76 +8,48 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
 /**
- * @SWG\Swagger(
- *     @SWG\Info(
- *         version="1.0.0",
- *         title="Laravel Passport Authorization Code API",
- *         description="Authorization Code API description",
- *         @SWG\Contact(
- *             email="coolgood88142@gmail.com"
- *         ),
+ *  @OA\Post(
+ *     path="/oauth/token",
+ *     tags={"AccessToken"},
+ *     @OA\RequestBody(
+ *        @OA\MediaType(
+ *           mediaType="multipart/form-data",
+ *           @OA\Schema(
+ *              @OA\Property(
+ *                  property="grant_type",
+ *                  type="string"
+ *              ),
+ *              @OA\Property(
+ *                  property="redirect_uri",
+ *                  type="string"
+ *              ),
+ *              @OA\Property(
+ *                  property="code",
+ *                  type="string"
+ *              ),
+ *              @OA\Property(
+ *                  property="client_id",
+ *                  type="Integer"
+ *              ),
+ *              @OA\Property(
+ *                  property="client_secret",
+ *                  type="string"
+ *              ),
+ *              example={
+ *                  "grant_type": "authorization_code",
+ *                  "redirect_uri": "http://127.0.0.1:8080/getAuthorizationCode",
+ *                  "code": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+ *                  "client_id": 18,
+ *                  "client_secret": "har2ePG2kSTW2BPNaqVWdiyhg5U3SarVxNpLxZgD"
+ *              }
+ *           )
+ *        )
  *     ),
- *     @SWG\SecurityScheme(
- *       securityDefinition="Bearer",
- *       type="apiKey",
- *       in="header",
- *       name="Authorization",
- *     ),
- *     @SWG\SecurityScheme(
- *       securityDefinition="userInfo Bearer",
- *       type="apiKey",
- *       in="header",
- *       name="Authorization",
- *     ),
- *     @SWG\Post(
- *          path="/oauth/token",
- *          summary="取得Access Token",
- *          tags={"AccessToken"},
- *          produces={"application/json"},
- *          security={
- *               {"Bearer":{}}
- *          },
- *          @SWG\Parameter(
- *               name="grant_type",
- *               in="formData",
- *               description="grantType",
- *               required=true,
- *               type="string",
- *          ),
- *          @SWG\Parameter(
- *               name="redirect_uri",
- *               in="formData",
- *               description="redirectUri",
- *               required=true,
- *               type="string",
- *          ),
-  *          @SWG\Parameter(
- *               name="code",
- *               in="formData",
- *               description="code",
- *               required=true,
- *               type="string",
- *          ),
-  *          @SWG\Parameter(
- *               name="client_id",
- *               in="formData",
- *               description="client_id",
- *               required=true,
- *               type="string",
- *          ),
-  *          @SWG\Parameter(
- *               name="client_secret",
- *               in="formData",
- *               description="clientSecret",
- *               required=true,
- *               type="string",
- *          ),
- *          @SWG\Response(
- *              response=200,
- *              description="Successful operation",
- *          )
+ *     @OA\Response(
+ *         response=200,
+ *         description="Successful operation",
  *     )
- * )
+ *  )
  */
 class Controller extends BaseController
 {

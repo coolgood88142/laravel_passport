@@ -6,39 +6,39 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-/**
-     * @SWG\Get(
+class UserController extends Controller
+{
+    /**
+     **
+     * @OA\Get(
      *     path="/api/user",
-     *     summary="取得使用者資訊",
      *     tags={"UserInfo"},
-     *     produces={"application/json"},
-     *     security={
-     *          {"userInfo Bearer":{}}
-     *     },
-     *     @SWG\Response(
+     *     @OA\Response(
      *          response=200,
      *          description="Successful operation",
      *     ),
-     *     @SWG\Response(
+     *     @OA\Response(
      *          response="401",
      *          description="Unauthenticated",
      *     ),
-     *     @SWG\Response(
+     *     @OA\Response(
      *          response="403",
      *          description="Forbidden",
      *     ),
-     *     @SWG\Response(
+     *     @OA\Response(
      *          response="400",
      *          description="Bad Request",
      *     ),
-     *     @SWG\Response(
+     *     @OA\Response(
      *          response="404",
      *          description="not found",
      *     ),
+     *     security={
+     *          {"passport":{}}
+     *     },
      * )
+     *
      */
-class UserController extends Controller
-{
     public function getData(Request $request) {
         return $request->user()->toArray();
     }

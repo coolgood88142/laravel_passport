@@ -16,8 +16,7 @@
         "laravel/framework": "^6.20.26",
         "laravel/passport": "7.5.1",
         "laravel/tinker": "^2.5",
-        "maatwebsite/excel": "^3.1",
-        "zircote/swagger-php": "2.*"
+        "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
         "facade/ignition": "^1.16.15",

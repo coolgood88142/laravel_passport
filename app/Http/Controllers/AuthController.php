@@ -107,49 +107,6 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
-    /**
-     *  @SWG\Post(
-     *      path="/getBearerToken",
-     *      tags={"getBearerToken"},
-     *      summary="getBearerToken",
-     *      operationId="getBearerToken",
-     *      consumes={"application/json"},
-     *      produces={"application/json"},
-     *      @SWG\Parameter(
-     *           name="email",
-     *           in="query",
-     *           required=true,
-     *           type="string"
-     *      ),
-     *      @SWG\Parameter(
-     *           name="password",
-     *           in="query",
-     *           required=true,
-     *           type="string"
-     *      ),
-     *      @SWG\Response(
-     *           response=200,
-     *           description="Success"
-     *      ),
-     *      @SWG\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *      ),
-     *      @SWG\Response(
-     *         response=400,
-     *         description="Bad Request"
-     *      ),
-     *      @SWG\Response(
-     *         response=404,
-     *         description="not found"
-     *      ),
-     *      @SWG\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *      )
-     *  )
-     *
-     */
     public function getBearerToken(Request $request){
         $request->validate([
             'email' => 'required|string|email',
